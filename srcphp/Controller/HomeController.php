@@ -56,95 +56,136 @@ class HomeController
         }
     }
 
-    public function cate()
+    public function mostrarProteina()
     {
         try {
-            $categorias = Table::query("SELECT id,nombre_categoria FROM categorias");
-            $categorias = new Success($categorias);
-            $categorias->Send();
-            return $categorias;
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Proteina'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
         } catch (\Exception $e) {
             $s = new Failure(401, $e->getMessage());
             return $s->Send();
         }
     }
-    public function Insertarproducto()
+
+    public function mostrarCreatina()
     {
         try {
-            $JSONData = file_get_contents("php://input");
-            $dataObject = json_decode($JSONData);
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Creatina'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
 
-            // Poder guardar imagen
-            $imagenBase64 = $dataObject->imagen;
-            $imagenData = base64_decode($imagenBase64);
+    public function mostrarAminoacidos()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Aminoacidoa'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
 
-            $finfo = finfo_open();
-            $mime_type = finfo_buffer($finfo, $imagenData, FILEINFO_MIME_TYPE);
-            finfo_close($finfo);
+    public function mostrarPre()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Pre-entreno'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
 
-            // Validar la extensión permitida
-            $extensionMap = [
-                'image/jpeg' => 'jpg',
-                'image/jpg' => 'jpg',
-                'image/png' => 'png',
-                'image/svg+xml' => 'svg',
-            ];
+    public function mostrarSuplemento()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Suplemento'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
 
-            if (!array_key_exists($mime_type, $extensionMap)) {
-                throw new \Exception('Formato de imagen no permitido');
-            }
-
-            $fileExtension = $extensionMap[$mime_type];
-            $nombreImagen = uniqid() . '.' . $fileExtension;
-
-            $rutaImagen = 'C:\Users\ANGEL\Desktop\inte\integrachola\apigym\POOCRUD\public\img\\' . $nombreImagen;
-
-            if (file_put_contents($rutaImagen, $imagenData) === false) {
-                throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
-            }
-
-            $prod = new Producto();
-            $prod->nombre_producto = $dataObject->nombre_producto;
-            $prod->descripcion = $dataObject->descripcion;
-            $prod->precio = $dataObject->precio;
-            $prod->existencia = $dataObject->existencia;
-            $prod->imagen = $nombreImagen;
-
-            // Obtener categorías
-            $categoriasResponse = $this->cate();
-            $categorias = $categoriasResponse;
-
-            if (empty($categorias)) {
-                // Manejar el error al obtener las categorías
-                throw new \Exception('Error al obtener las categorías');
-            }
-
-            $categoriaId = $dataObject->id_categoria;
-            $categoriaEncontrada = false;
-
-            foreach ($categorias as $categoria) {
-                if ($categoria->id === $categoriaId) {
-                    $categoriaEncontrada = true;
-                    break;
+    public function Insertarproducto()
+            {
+                try {
+                    $JSONData = file_get_contents("php://input");
+                    $dataObject = json_decode($JSONData);
+                    $prod = new Producto();
+                    $prod->nombre_producto = $dataObject->nombre_producto;
+                    $prod->descripcion = $dataObject->descripcion;
+                    $prod->precio = $dataObject->precio;
+                    $prod->existencia = $dataObject->existencia;
+            
+                    // Poder guardar imagen
+                    $imagenBase64 = $dataObject->imagen;
+                    
+                    // Verificar si la cadena base64 tiene el formato esperado
+                    if (strpos($imagenBase64, 'data:image') !== 0) {
+                        throw new \Exception('La cadena base64 no parece ser una imagen válida.');
+                    }
+            
+                    // Eliminar el encabezado de la cadena base64
+                    $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+                    $imagenData = base64_decode($base64WithoutHeader);
+            
+                    // Usar getimagesize para obtener el tipo MIME
+                    $imageInfo = getimagesizefromstring($imagenData);
+                    if ($imageInfo === false || !isset($imageInfo['mime'])) {
+                        throw new \Exception('No se pudo obtener información de la imagen.');
+                    }
+            
+                    $mime_type = $imageInfo['mime'];
+            
+                    // Validar la extensión permitida
+                    $extensionMap = [
+                        'image/jpeg' => 'jpg',
+                        'image/jpg'  => 'jpg',
+                        'image/png'  => 'png',
+                        'image/svg+xml' => 'svg',
+                    ];
+            
+                    if (!array_key_exists($mime_type, $extensionMap)) {
+                        throw new \Exception('Formato de imagen no permitido');
+                    }
+            
+                    $fileExtension = $extensionMap[$mime_type];
+                    $nombreImagen = uniqid() . '.' . $fileExtension;
+            
+                    $rutaImagen = '/var/www/html/Api/public/img/productos/' . $nombreImagen;
+            
+                    // Guardar la imagen en el servidor
+                    if (file_put_contents($rutaImagen, $imagenData) === false) {
+                        throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
+                    }
+            
+                    $prod->imagen = $rutaImagen;
+                    $prod->categoria = $dataObject->categoria;
+                    $prod->save();
+            
+                    $s = new Success($prod);
+            
+                    return $s->Send();
+                } catch (\Exception $e) {
+                    $s = new Failure(401, $e->getMessage());
+                    return $s->Send();
                 }
             }
-
-            if (!$categoriaEncontrada) {
-                throw new \Exception('La categoría proporcionada no es válida');
-            }
-
-            // Asignar la categoría al producto
-            $prod->id_categoria = $dataObject->id_categoria;
-
-            $prod->save();
-            $s = new Success($prod);
-
-            return $s->Send();
-        } catch (\Exception $e) {
-            $s = new Failure(401, $e->getMessage());
-            return $s->Send();
-        }
-    }
 
     public function mostrarUsuarios()
     {

@@ -23,7 +23,7 @@ Router::get('/proveedores', [HomeController::class, "prov"]);
 Router::get('/proveedore', [HomeController::class,"prov"]);
 Router::get("/categorias",[HomeController::class,"cate"]);
 
-Router::get("/insertarproducto",[HomeController::class,"Insertarproducto"]);
+Router::post("/insertarproducto",[HomeController::class,"Insertarproducto"]);
 
 Router::post('/registrousuario', [UserController::class, 'registrousuario']);
 Router::post('/login', [UserController::class, "login"]);

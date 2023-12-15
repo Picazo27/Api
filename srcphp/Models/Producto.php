@@ -15,7 +15,7 @@ public $id;
  public $imagen;
  public $descripcion;
  public $precio;
- public $id_categoria;
+ public $categoria;
  public $existencia;
 
  
@@ -24,7 +24,7 @@ public $id;
      * @var array
      */
     protected $filleable = [
-        "nombre_producto","imagen","descripcion","id_categoria","precio","existencia"
+        "nombre_producto","imagen","descripcion","categoria","precio","existencia"
     ];
 
     public function registrarProducto($data)
