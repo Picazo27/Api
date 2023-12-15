@@ -21,7 +21,7 @@ class Table
 }
     static function query($query)
     {
-        $cc = new  Conexion("gimnasioda", "localhost", "root", "");
+        $cc = new  Conexion("GimnasioDa", "localhost", "gimansio", "gym123");
         self::$pdo = $cc->getPDO();
         $stmt = self::$pdo->query($query);
         $resultados = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -30,7 +30,7 @@ class Table
 
     static function queryParams($query,$params = [])
     {
-        $cc = new  Conexion("gimnasioda", "localhost", "root", "");
+        $cc = new  Conexion("GimnasioDa", "localhost", "gimansio", "gym123");
         self::$pdo = $cc->getPDO();
 
         $stmt = self::$pdo->prepare($query);
