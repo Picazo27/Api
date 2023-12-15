@@ -15,6 +15,8 @@ Router::get("/", function () {
     echo "Bienvenido";
 });
 
+
+
 Router::get("/mostrar",[HomeController::class,"mostrarproducto"]);
 Router::get('/proveedores', [HomeController::class, "prov"]);
 
