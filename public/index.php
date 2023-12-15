@@ -18,12 +18,20 @@ Router::get("/", function () {
 
 
 Router::get("/mostrar",[HomeController::class,"mostrarproducto"]);
+Router::get("/proteina",[HomeController::class,"mostrarProteina"]);
+Router::get("/cretina",[HomeController::class,"mostrarCreatina"]);
+Router::get("/aminoacidos",[HomeController::class,"mostrarAminoacidos"]);
+Router::get("/preentreno",[HomeController::class,"mostrarPre"]);
+Router::get("/suplemento",[HomeController::class,"mostrarSuplemento"]);
+
+
 Router::get('/proveedores', [HomeController::class, "prov"]);
 
 Router::get('/proveedore', [HomeController::class,"prov"]);
 Router::get("/categorias",[HomeController::class,"cate"]);
 
 Router::post("/insertarproducto",[HomeController::class,"Insertarproducto"]);
+
 
 Router::post('/registrousuario', [UserController::class, 'registrousuario']);
 Router::post('/login', [UserController::class, "login"]);

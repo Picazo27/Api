@@ -132,7 +132,7 @@ class HomeController
                     $prod->precio = $dataObject->precio;
                     $prod->existencia = $dataObject->existencia;
             
-                    // Poder guardar imagen
+                  /*  // Poder guardar imagen
                     $imagenBase64 = $dataObject->imagen;
                     
                     // Verificar si la cadena base64 tiene el formato esperado
@@ -173,8 +173,8 @@ class HomeController
                     if (file_put_contents($rutaImagen, $imagenData) === false) {
                         throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
                     }
-            
-                    $prod->imagen = $rutaImagen;
+            */
+                    $prod->imagen = null;
                     $prod->categoria = $dataObject->categoria;
                     $prod->save();
             
