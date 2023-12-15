@@ -8,6 +8,8 @@ class Response
 	protected $status = 200;
 	protected $message;
 
+	
+	// Se cambio esta linea para poder aceptar peticiones
 	protected $headers = array(
 		'Cache-Control: no-cache',                  // Evitar el almacenamiento en caché en la ruta
 		'Pragma: no-cache',                         // Lo mismo (por si acaso)
@@ -15,7 +17,6 @@ class Response
 		'Access-Control-Allow-Origin: *',          // Permitir peticiones AJAX entre dominios
 		'Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With',
 		'Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'
-
 	);
 
 	function __construct()
