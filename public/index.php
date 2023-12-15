@@ -11,6 +11,10 @@ use proyecto\Response\Success;
 
 Router::headers();
 
+Router::get("/", function () {
+    echo "Bienvenido";
+});
+
 Router::get("/mostrar",[HomeController::class,"mostrarproducto"]);
 Router::get('/proveedores', [HomeController::class, "prov"]);
 
@@ -22,6 +26,6 @@ Router::get("/insertarproducto",[HomeController::class,"Insertarproducto"]);
 Router::post('/registrousuario', [UserController::class, 'registrousuario']);
 Router::post('/login', [UserController::class, "login"]);
 
-
+?>
 
 
