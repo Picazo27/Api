@@ -21,6 +21,7 @@ class User extends Models
     public $apellido_m = "";
     public $telefono = "";
     public $id = "";
+    public $roles ="";
 
     /**
      * @var array
@@ -31,7 +32,8 @@ class User extends Models
         "apellido_m",
         "contrasena",
         "user",
-        "telefono"
+        "telefono",
+        "roles"
     ];
     protected    $table = "users";
 

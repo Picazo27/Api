@@ -33,9 +33,11 @@ Router::get("/categorias",[HomeController::class,"cate"]);
 Router::post("/insertarproducto",[HomeController::class,"Insertarproducto"]);
 
 
-Router::post('/registrousuario', [UserController::class, 'registrousuario']);
+Router::post('/registro', [UserController::class, 'registro']);
 Router::post('/login', [UserController::class, "login"]);
 
+Router::post('/registrarempleado',[UserController::class, 'registrarEmpleado']);
+Router::post('/registroproveedor',[UserController::class, 'registroproveedor']);
 ?>
 
 

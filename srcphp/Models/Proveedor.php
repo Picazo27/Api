@@ -13,13 +13,14 @@ class proveedor extends Models
     public $nombre_proveedor;
     public $direccion;
     public $corre_electronico;
+    public $telefono;
 
     protected  $table = "proveedores";
     /**
      * @var array
      */
     protected $filleable = [
-        "nombre_proveedor","direccion","corre_electronico"
+        "nombre_proveedor","direccion","corre_electronico","telefono"
     ];
 
 }

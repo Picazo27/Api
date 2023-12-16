@@ -10,6 +10,8 @@ use proyecto\Models\categoria;
 use proyecto\Models\Table;
 use proyecto\Response\Success;
 use proyecto\Response\Failure;
+use proyecto\Models\User;
+use proyecto\Models\Empleado;
 use proyecto\Conexion;
 
 class HomeController
@@ -132,7 +134,7 @@ class HomeController
                     $prod->precio = $dataObject->precio;
                     $prod->existencia = $dataObject->existencia;
             
-                  /*  // Poder guardar imagen
+                    // Poder guardar imagen
                     $imagenBase64 = $dataObject->imagen;
                     
                     // Verificar si la cadena base64 tiene el formato esperado
@@ -173,7 +175,7 @@ class HomeController
                     if (file_put_contents($rutaImagen, $imagenData) === false) {
                         throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
                     }
-            */
+            
                     $prod->imagen = null;
                     $prod->categoria = $dataObject->categoria;
                     $prod->save();
@@ -246,6 +248,44 @@ class HomeController
         }
     }
 }*/
+
+public function registrarEmpleado()
+{
+    try {
+        // Obtener datos del JSON
+        $JSONData = file_get_contents("php://input");
+        $dataObject = json_decode($JSONData);
+
+        // Extraer datos
+        $nombre_usuario = $dataObject->nombre_usuario;
+        $id_usuario = $dataObject->id_usuario;
+        $RFC = $dataObject->RFC;
+
+        $exist_user = User::where('nombre_usuario', '=', $dataObject->nombre_usuario);
+            if ($exist_user) {
+                throw new \Exception("El usuario ya está registrado.");
+            }
+        
+
+
+        // Crear empleado asociado al usuario
+        $empleado = new Empleado();
+        $empleado->id_usuario = $id_usuario;
+        $empleado->RFC = $RFC;
+        $empleado->estatus = 'activo';
+        $empleado->save();
+
+        // Puedes retornar un mensaje de éxito o cualquier otro tipo de respuesta
+        $response = ['mensaje' => 'Empleado registrado exitosamente'];
+        $s = new Success($response);
+        return $s->Send();
+    } catch (\Exception $e) {
+        // En caso de error, retornar un mensaje de error
+        $s = new Failure(401, $e->getMessage());
+        return $s->Send();
+    }
+}
+
 
 }
 

@@ -9,6 +9,8 @@ use proyecto\Response\Success;
 use proyecto\Models\Table;
 use proyecto\Models\Direccion_user;
 use proyecto\Models\direccion;
+use proyecto\Models\Proveedor;
+use proyecto\Models\Empleado;
 
 class UserController
 {
@@ -53,8 +55,10 @@ class UserController
         $user->nombre = $dataObject->nombre;
         $user->apellido_p = $dataObject->apellido_p;
         $user->apellido_m = $dataObject->apellido_m;
-        $user->user = $dataObject->correo;
+        $user->user = $dataObject->user;
+        $user->telefono = $dataObject->telefono;
         $user->contrasena = password_hash($dataObject->contrasena, PASSWORD_DEFAULT);
+        $user->roles = 'cliente';
         $user->save();
 
         // Crear la relación en la tabla direccion_user
@@ -150,6 +154,106 @@ class UserController
             return ['success' => false, 'message' => 'Error en el servidor: '.$e->getMessage()];
         }
     }
+    public function registroproveedor()
+    {
+        try {
+            $JSONData = file_get_contents("php://input");
+            $dataObject = json_decode($JSONData);
+    
+            // Crear y guardar la dirección
+            $direccion = new Direccion();
+            $direccion->calle = $dataObject->calle;
+            $direccion->numero = $dataObject->numero;
+            $direccion->colonia = $dataObject->colonia;
+            $direccion->codigo_postal = $dataObject->codigo_postal;
+            $direccion->save();
+    
+            // Crear y guardar el usuario
+            $Proveedor = new Proveedor();
+            $Proveedor->nombre_proveedor = $dataObject->nombre_proveedor;
+            $Proveedor->corre_electronico = $dataObject->corre_electronico;
+            $Proveedor->telefono = $dataObject->telefono;
+            $Proveedor->direccion= $direccion->id;
+            $Proveedor->save();
+    
+    
+            $r = new Success($Proveedor);
+    
+            return $r->Send();
+        } catch (\Exception $e) {
+            $r = new Failure(401, $e->getMessage());
+            return $r->Send();
+        }
+    }
+    
+    public function registrarEmpleado()
+    {
+        try {
+            $JSONData = file_get_contents("php://input");
+            $dataObject = json_decode($JSONData);
+            $user = new User();
+    
+            if ($JSONData === false) {
+                throw new \Exception("Error al leer la entrada JSON.");
+            }
+    
+            $dataObject = json_decode($JSONData);
+    
+            if ($dataObject === null) {
+                throw new \Exception("Error al decodificar el JSON.");
+            }
+    
+            // Validar si el correo o teléfono ya están registrados
+            $existcorreo = User::where('user', '=', $dataObject->user);
+            $existtel = User::where('telefono', '=', $dataObject->telefono);
+    
+            if ($existcorreo) {
+                throw new \Exception("El correo electrónico ya está registrado.");
+            }
+    
+            if ($existtel) {
+                throw new \Exception("El teléfono ya está registrado.");
+            }
+    
+            $direccion = new Direccion();
+            $direccion->calle = $dataObject->calle;
+            $direccion->numero = $dataObject->numero;
+            $direccion->colonia = $dataObject->colonia;
+            $direccion->codigo_postal = $dataObject->codigo_postal;
+            $direccion->save();
+    
+            // Crear y guardar el usuario
+            $user->nombre = $dataObject->nombre;
+            $user->apellido_p = $dataObject->apellido_p;
+            $user->apellido_m = $dataObject->apellido_m;
+            $user->user = $dataObject->user;
+            $user->telefono = $dataObject->telefono;
+            $user->contrasena = password_hash($dataObject->contrasena, PASSWORD_DEFAULT);
+            $user->roles = 'empleado';
+            $user->save();
+    
+            // Crear la relación en la tabla direccion_user
+            $direccionUser = new Direccion_User();
+            $direccionUser->id_user = $user->id;
+            $direccionUser->id_direccion = $direccion->id;
+            $direccionUser->save();
+    
+    
+            // Guardar el empleado después de haber guardado el usuario
+            $empleado = new Empleado();
+            $empleado->RFC = $dataObject->RFC;
+            $empleado->salario_mensual = $dataObject->salario_mensual;
+            $empleado->id_usuario = $user->id;
+            $empleado->estatus = 'activo';
+            $empleado->save();
+    
+            $r = new Success($empleado);
+            return $r->Send();
+        } catch (\Exception $e) {
+            $r = new Failure(401, $e->getMessage());
+            return $r->Send();
+        }
+    }
+    
 
-  
 }
