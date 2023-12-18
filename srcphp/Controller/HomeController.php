@@ -137,6 +137,11 @@ class HomeController
             $JSONData = file_get_contents("php://input");
             $dataObject = json_decode($JSONData);
     
+            // Verificar errores en la decodificación
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Error al decodificar JSON: ' . json_last_error_msg());
+            }
+    
             $prod = new Producto();
             $prod->nombre_producto = $dataObject->nombre_producto;
             $prod->descripcion = $dataObject->descripcion;
@@ -153,9 +158,14 @@ class HomeController
     
             // Eliminar el encabezado de la cadena base64
             $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+    
+            // Verificar errores en la decodificación de la cadena Base64
             $imagenData = base64_decode($base64WithoutHeader);
-
-            echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
+            if ($imagenData === false) {
+                throw new \Exception('Error al decodificar la cadena Base64.');
+            }
+    
+            echo 'Cadena Base64 sin encabezado: ' . $base64WithoutHeader . PHP_EOL;
     
             // Usar getimagesize para obtener el tipo MIME
             $imageInfo = getimagesizefromstring($imagenData);
@@ -164,7 +174,7 @@ class HomeController
             }
     
             $mime_type = $imageInfo['mime'];
-
+    
             echo 'Tipo MIME: ' . $mime_type . PHP_EOL;
     
             // Validar la extensión permitida
@@ -182,25 +192,25 @@ class HomeController
             $fileExtension = $extensionMap[$mime_type];
             $nombreImagen = uniqid() . '.' . $fileExtension;
     
-            $rutaImagen = '/var/www/html/apiPhp/public/img/' . $nombreImagen;
+            $rutaImagen = '/var/www/html/apiPhp/public/img/productos/' . $nombreImagen;
     
-            // Guardar la imagen en el servidor usando move_uploaded_file
+            // Guardar la imagen en el servidor usando file_put_contents
             if (file_put_contents($rutaImagen, $imagenData) === false) {
                 throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
             }
     
             $prod->imagen = $rutaImagen;
-
+    
             $proveedorId = $dataObject->proveedor;
-
-             // Verificar si el proveedor existe
-             $proveedorExistente = Proveedor::find($proveedorId);
-
-               if (!$proveedorExistente) {
-            throw new \Exception('El proveedor seleccionado no existe.');
-             }
-
-             $prod->proveedor = $proveedorId;
+    
+            // Verificar si el proveedor existe
+            $proveedorExistente = Proveedor::find($proveedorId);
+    
+            if (!$proveedorExistente) {
+                throw new \Exception('El proveedor seleccionado no existe.');
+            }
+    
+            $prod->proveedor = $proveedorId;
             $prod->categoria = $dataObject->categoria;
             $prod->save();
     
