@@ -204,6 +204,7 @@ class HomeController
             $prod->imagen = $rutaImagen;
     */
             $prod->imagen = null;
+            $proveedorId = new Proveedor;
             $proveedorId = $dataObject->proveedor;
 
             // Verificar si el proveedor existe
