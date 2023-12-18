@@ -46,6 +46,7 @@ public function Send(){
 	if(isset($this->data)){
 			$R->data = $this->data;         };
 
+			define('RESPOND_WITH_REQUEST', true);
 
 	// If set, include Request in response
 	if(defined('RESPOND_WITH_REQUEST') && RESPOND_WITH_REQUEST){
