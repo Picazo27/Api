@@ -12,7 +12,7 @@ class proveedor extends Models
     public $id;
     public $nombre_proveedor;
     public $direccion;
-    public $corre_electronico;
+    public $correo_electronico;
     public $telefono;
 
     protected  $table = "proveedores";
@@ -20,7 +20,7 @@ class proveedor extends Models
      * @var array
      */
     protected $filleable = [
-        "nombre_proveedor","direccion","corre_electronico","telefono"
+        "nombre_proveedor","direccion","correo_electronico","telefono"
     ];
 
 }

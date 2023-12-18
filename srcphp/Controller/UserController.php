@@ -171,7 +171,7 @@ class UserController
             // Crear y guardar el usuario
             $Proveedor = new Proveedor();
             $Proveedor->nombre_proveedor = $dataObject->nombre_proveedor;
-            $Proveedor->corre_electronico = $dataObject->corre_electronico;
+            $Proveedor->correo_electronico = $dataObject->correo_electronico;
             $Proveedor->telefono = $dataObject->telefono;
             $Proveedor->direccion= $direccion->id;
             $Proveedor->save();
