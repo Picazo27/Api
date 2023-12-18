@@ -26,6 +26,7 @@ Router::get("/cretina",[HomeController::class,"mostrarCreatina"]);
 Router::get("/aminoacidos",[HomeController::class,"mostrarAminoacidos"]);
 Router::get("/preentreno",[HomeController::class,"mostrarPre"]);
 Router::get("/suplemento",[HomeController::class,"mostrarSuplemento"]);
+Router::get("/ordenes", [HomeController::class, "ordenes"]);
 
 
 Router::get('/proveedores', [HomeController::class, "prov"]);

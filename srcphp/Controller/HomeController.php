@@ -60,6 +60,22 @@ class HomeController
         }
     }
 
+    public function ordenes()
+    {
+        try {
+            $proveedores = Table::query("SELECT id,users.nombre,estatus FROM orden_venta
+            INNER JOIN users ON orden_venta.cliente = users.id;");
+            $proveedores = new Success($proveedores);
+            $proveedores->Send();
+            return $proveedores;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
+
+    
     public function mostrarProteina()
     {
         try {
