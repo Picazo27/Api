@@ -204,23 +204,16 @@ class HomeController
             $prod->imagen = $rutaImagen;
     */
     $prod->imagen = null;
-    // Obtener el proveedor del objeto JSON
-$proveedorId = $dataObject->proveedor;
+    $proveedorId = $dataObject->proveedor;
 
-// Verificar si la propiedad proveedor está definida en el objeto JSON
-if (!isset($dataObject->proveedor)) {
-    throw new \Exception('La propiedad proveedor no está definida en el objeto JSON.');
-}
+    // Verificar si el proveedor existe
+    $proveedorExistente = Proveedor::find($proveedorId);
 
-// Verificar si el proveedor existe
-$proveedorExistente = Proveedor::find($proveedorId);
+      if (!$proveedorExistente) {
+   throw new \Exception('El proveedor seleccionado no existe.');
+    }
 
-if (!$proveedorExistente) {
-    throw new \Exception('El proveedor seleccionado no existe.');
-}
-
-// Asignar la propiedad específica del proveedor
-$prod->proveedor = $proveedorExistente;
+    $prod->proveedor = $proveedorId;
 
 $prod->categoria = $dataObject->categoria;
 $prod->save();
