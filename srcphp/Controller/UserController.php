@@ -8,7 +8,7 @@ use proyecto\Response\Failure;
 use proyecto\Response\Success;
 use proyecto\Models\Table;
 use proyecto\Models\Direccion_user;
-use proyecto\Models\direccion;
+use proyecto\Models\Direccion;
 use proyecto\Models\Proveedor;
 use proyecto\Models\Empleado;
 

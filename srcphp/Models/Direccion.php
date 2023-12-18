@@ -1,6 +1,6 @@
 <?php
 namespace proyecto\Models;
-class direccion extends Models
+class Direccion extends Models
 {
     public $id;
     public $calle;
