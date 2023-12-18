@@ -182,7 +182,7 @@ class HomeController
             $fileExtension = $extensionMap[$mime_type];
             $nombreImagen = uniqid() . '.' . $fileExtension;
     
-            $rutaImagen = '/var/www/html/apiPhp/public/img/productos/' . $nombreImagen;
+            $rutaImagen = '/var/www/html/apiPhp/public/img/' . $nombreImagen;
     
             // Guardar la imagen en el servidor usando move_uploaded_file
             if (file_put_contents($rutaImagen, $imagenData) === false) {
