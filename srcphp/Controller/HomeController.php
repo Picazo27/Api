@@ -5,7 +5,7 @@ namespace proyecto\Controller;
 require("../vendor/autoload.php");
 
 use proyecto\Models\Producto;
-use proyecto\Models\proveedor;
+use proyecto\Models\Proveedor;
 use proyecto\Models\categoria;
 use proyecto\Models\Table;
 use proyecto\Response\Success;
@@ -205,15 +205,20 @@ class HomeController
     */
             $prod->imagen = null;
             $proveedorId = $dataObject->proveedor;
-    
+
             // Verificar si el proveedor existe
-            $proveedorExistente = Proveedor::find($proveedorId);
-    
-            if (!$proveedorExistente) {
-                throw new \Exception('El proveedor seleccionado no existe.');
+            if (!property_exists($dataObject, 'proveedor')) {
+            throw new \Exception('La propiedad proveedor no está definida en el objeto JSON.');
             }
-    
+
+            $proveedorExistente = Proveedor::find($proveedorId);
+
+            if (!$proveedorExistente) {
+            throw new \Exception('El proveedor seleccionado no existe.');
+            }
+
             $prod->proveedor = $proveedorId;
+
             $prod->categoria = $dataObject->categoria;
             $prod->save();
     
