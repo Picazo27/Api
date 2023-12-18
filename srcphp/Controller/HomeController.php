@@ -151,7 +151,7 @@ class HomeController
             $prod->existencia = $dataObject->existencia;
     
             // Poder guardar imagen
-            $imagenBase64 = $dataObject->imagen;
+           /* $imagenBase64 = $dataObject->imagen;
     
             // Verificar si la cadena base64 tiene el formato esperado
             if (strpos($imagenBase64, 'data:image') !== 0) {
@@ -202,7 +202,8 @@ class HomeController
             }
     
             $prod->imagen = $rutaImagen;
-    
+    */
+            $prod->imagen = null;
             $proveedorId = $dataObject->proveedor;
     
             // Verificar si el proveedor existe
