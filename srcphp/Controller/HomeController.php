@@ -135,13 +135,15 @@ class HomeController
         try {
             // Obtener datos JSON directamente
             $JSONData = file_get_contents("php://input");
+            echo 'JSON recibido: ' . $JSONData . PHP_EOL;
             $dataObject = json_decode($JSONData);
     
             // Verificar errores en la decodificación
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception('Error al decodificar JSON: ' . json_last_error_msg());
             }
-    
+
+
             $prod = new Producto();
             $prod->nombre_producto = $dataObject->nombre_producto;
             $prod->descripcion = $dataObject->descripcion;
