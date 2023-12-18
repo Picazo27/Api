@@ -48,7 +48,7 @@ class HomeController
     {
         try {
             $proveedores = Table::query("SELECT nombre_proveedor,direcciones.calle,
-            direcciones.numero,direcciones.colonia,direcciones.codigo_postal,corre_electronico,precio,
+            direcciones.numero,direcciones.colonia,direcciones.codigo_postal,correo_electronico,precio,
             existencia FROM proveedores
             inner join direcciones on proveedores.direccion = direcciones.id");
             $proveedores = new Success($proveedores);
