@@ -19,7 +19,7 @@ class HomeController
     private $conexion;
     public function __construct()
     {
-        $this->conexion = new Conexion('GimnasioDa', 'localhost', 'gimansio', 'gym123');
+        $this->conexion = new Conexion("GimnasioDa", "localhost", "gimansio", "gym123");
     }
     public function bienvenido()
     {
