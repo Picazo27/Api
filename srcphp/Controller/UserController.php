@@ -158,7 +158,9 @@ class UserController
     {
         try {
             $JSONData = file_get_contents("php://input");
+            echo 'JSON recibido: ' . $JSONData . PHP_EOL;
             $dataObject = json_decode($JSONData);
+
     
             // Crear y guardar la dirección
             $direccion = new Direccion();
