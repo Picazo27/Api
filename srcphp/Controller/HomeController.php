@@ -124,70 +124,84 @@ class HomeController
     }
 
     public function Insertarproducto()
-            {
-                try {
-                    $JSONData = file_get_contents("php://input");
-                    $dataObject = json_decode($JSONData);
-                    $prod = new Producto();
-                    $prod->nombre_producto = $dataObject->nombre_producto;
-                    $prod->descripcion = $dataObject->descripcion;
-                    $prod->precio = $dataObject->precio;
-                    $prod->existencia = $dataObject->existencia;
-            
-                    // Poder guardar imagen
-                    $imagenBase64 = $dataObject->imagen;
-                    
-                    // Verificar si la cadena base64 tiene el formato esperado
-                    if (strpos($imagenBase64, 'data:image') !== 0) {
-                        throw new \Exception('La cadena base64 no parece ser una imagen válida.');
-                    }
-            
-                    // Eliminar el encabezado de la cadena base64
-                    $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
-                    $imagenData = base64_decode($base64WithoutHeader);
-            
-                    // Usar getimagesize para obtener el tipo MIME
-                    $imageInfo = getimagesizefromstring($imagenData);
-                    if ($imageInfo === false || !isset($imageInfo['mime'])) {
-                        throw new \Exception('No se pudo obtener información de la imagen.');
-                    }
-            
-                    $mime_type = $imageInfo['mime'];
-            
-                    // Validar la extensión permitida
-                    $extensionMap = [
-                        'image/jpeg' => 'jpg',
-                        'image/jpg'  => 'jpg',
-                        'image/png'  => 'png',
-                        'image/svg+xml' => 'svg',
-                    ];
-            
-                    if (!array_key_exists($mime_type, $extensionMap)) {
-                        throw new \Exception('Formato de imagen no permitido');
-                    }
-            
-                    $fileExtension = $extensionMap[$mime_type];
-                    $nombreImagen = uniqid() . '.' . $fileExtension;
-            
-                    $rutaImagen = '/var/www/html/Api/public/img/productos/' . $nombreImagen;
-            
-                    // Guardar la imagen en el servidor
-                    if (file_put_contents($rutaImagen, $imagenData) === false) {
-                        throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
-                    }
-            
-                    $prod->imagen = null;
-                    $prod->categoria = $dataObject->categoria;
-                    $prod->save();
-            
-                    $s = new Success($prod);
-            
-                    return $s->Send();
-                } catch (\Exception $e) {
-                    $s = new Failure(401, $e->getMessage());
-                    return $s->Send();
-                }
+    {
+        try {
+            // Obtener datos JSON directamente
+            $JSONData = file_get_contents("php://input");
+            $dataObject = json_decode($JSONData);
+    
+            $prod = new Producto();
+            $prod->nombre_producto = $dataObject->nombre_producto;
+            $prod->descripcion = $dataObject->descripcion;
+            $prod->precio = $dataObject->precio;
+            $prod->existencia = $dataObject->existencia;
+    
+            // Poder guardar imagen
+            $imagenBase64 = $dataObject->imagen;
+    
+            // Verificar si la cadena base64 tiene el formato esperado
+            if (strpos($imagenBase64, 'data:image') !== 0) {
+                throw new \Exception('La cadena base64 no parece ser una imagen válida.');
             }
+    
+            // Eliminar el encabezado de la cadena base64
+            $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+            $imagenData = base64_decode($base64WithoutHeader);
+    
+            // Usar getimagesize para obtener el tipo MIME
+            $imageInfo = getimagesizefromstring($imagenData);
+            if ($imageInfo === false || !isset($imageInfo['mime'])) {
+                throw new \Exception('No se pudo obtener información de la imagen.');
+            }
+    
+            $mime_type = $imageInfo['mime'];
+    
+            // Validar la extensión permitida
+            $extensionMap = [
+                'image/jpeg' => 'jpg',
+                'image/jpg'  => 'jpg',
+                'image/png'  => 'png',
+                'image/svg+xml' => 'svg',
+            ];
+    
+            if (!array_key_exists($mime_type, $extensionMap)) {
+                throw new \Exception('Formato de imagen no permitido');
+            }
+    
+            $fileExtension = $extensionMap[$mime_type];
+            $nombreImagen = uniqid() . '.' . $fileExtension;
+    
+            $rutaImagen = 'C:\Users\ANGEL\Desktop\inte\integrachola\apigym\POOCRUD\public\img\\' . $nombreImagen;
+    
+            // Guardar la imagen en el servidor usando move_uploaded_file
+            if (file_put_contents($rutaImagen, $imagenData) === false) {
+                throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
+            }
+    
+            $prod->imagen = $rutaImagen;
+
+            $proveedorId = $dataObject->proveedor;
+
+             // Verificar si el proveedor existe
+             $proveedorExistente = Proveedor::find($proveedorId);
+
+               if (!$proveedorExistente) {
+            throw new \Exception('El proveedor seleccionado no existe.');
+             }
+
+             $prod->proveedor = $proveedorId;
+            $prod->categoria = $dataObject->categoria;
+            $prod->save();
+    
+            $s = new Success($prod);
+    
+            return $s->Send();
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+    
 
     public function mostrarUsuarios()
     {

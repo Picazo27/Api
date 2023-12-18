@@ -17,14 +17,14 @@ public $id;
  public $precio;
  public $categoria;
  public $existencia;
-
+ public $proveedor;
  
     protected  $table = "productos";
     /**
      * @var array
      */
     protected $filleable = [
-        "nombre_producto","imagen","descripcion","categoria","precio","existencia"
+        "nombre_producto","imagen","descripcion","categoria","precio","existencia","proveedor"
     ];
 
     public function registrarProducto($data)
