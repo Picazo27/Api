@@ -47,8 +47,10 @@ class HomeController
     public function prov()
     {
         try {
-            $proveedores = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM proveedores");
+            $proveedores = Table::query("SELECT nombre_proveedor,direcciones.calle,
+            direcciones.numero,direcciones.colonia,direcciones.codigo_postal,corre_electronico,precio,
+            existencia FROM proveedores
+            inner join direcciones on proveedores.direccion = direcciones.id");
             $proveedores = new Success($proveedores);
             $proveedores->Send();
             return $proveedores;
