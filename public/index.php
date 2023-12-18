@@ -10,6 +10,9 @@ use proyecto\Response\Failure;
 use proyecto\Response\Success;
 
 Router::headers();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 Router::get("/", function () {
     echo "Bienvenido";
