@@ -154,6 +154,8 @@ class HomeController
             // Eliminar el encabezado de la cadena base64
             $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
             $imagenData = base64_decode($base64WithoutHeader);
+
+            echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
             // Usar getimagesize para obtener el tipo MIME
             $imageInfo = getimagesizefromstring($imagenData);
@@ -162,6 +164,8 @@ class HomeController
             }
     
             $mime_type = $imageInfo['mime'];
+
+            echo 'Tipo MIME: ' . $mime_type . PHP_EOL;
     
             // Validar la extensión permitida
             $extensionMap = [
