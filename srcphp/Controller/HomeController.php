@@ -19,9 +19,8 @@ class HomeController
     private $conexion;
     public function __construct()
     {
-        $this->conexion = new Conexion('gimnasioda', 'localhost', 'root', '');
+        $this->conexion = new Conexion('GimnasioDa', 'localhost', 'gimansio', 'gym123');
     }
-
     public function bienvenido()
     {
         echo "Bienvenido";
@@ -31,7 +30,6 @@ class HomeController
     {
         echo "Prueba";
     }
-
     public function mostrarProducto()
     {
         try {
