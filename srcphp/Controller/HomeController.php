@@ -74,6 +74,27 @@ class HomeController
         }
     }
 
+    public function empleados()
+    {
+        try {
+            $proveedores = Table::query("SELECT nombre,RFC,concat(direcciones.calle,' ',direcciones.numero, ' ', direcciones.colonia, ' ' ,
+            direcciones.codigo_postal) as direccion,
+            user,Estatus
+            FROM empleados
+            inner join users on users.id = empleados.id_usuario
+            inner join direccion_user on direccion_user.id_user = users.id
+            inner join direcciones on direccion_user.id_direccion = direcciones.id
+            ");
+            $proveedores = new Success($proveedores);
+            $proveedores->Send();
+            return $proveedores;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
+
     public function ordenes()
     {
         try {
