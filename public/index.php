@@ -30,6 +30,7 @@ Router::get("/ordenes", [HomeController::class, "ordenes"]);
 
 
 Router::get('/proveedores', [HomeController::class, "prov"]);
+Router::get('/proveedor', [HomeController::class, "proveedor"]);
 
 Router::get('/proveedore', [HomeController::class,"prov"]);
 Router::get("/categorias",[HomeController::class,"cate"]);

@@ -60,6 +60,20 @@ class HomeController
         }
     }
 
+    public function proveedor()
+    {
+        try {
+            $proveedores = Table::query("SELECT id,nombre_proveedor
+            FROM proveedores");
+            $proveedores = new Success($proveedores);
+            $proveedores->Send();
+            return $proveedores;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
     public function ordenes()
     {
         try {
@@ -167,7 +181,7 @@ class HomeController
             $prod->existencia = $dataObject->existencia;
     
             // Poder guardar imagen
-           /* $imagenBase64 = $dataObject->imagen;
+            $imagenBase64 = $dataObject->imagen;
     
             // Verificar si la cadena base64 tiene el formato esperado
             if (strpos($imagenBase64, 'data:image') !== 0) {
@@ -218,7 +232,7 @@ class HomeController
             }
     
             $prod->imagen = $rutaImagen;
-    */
+    
     $prod->imagen = null;
     $proveedorId = $dataObject->proveedor;
 
