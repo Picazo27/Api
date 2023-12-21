@@ -94,6 +94,27 @@ class HomeController
         }
     }
 
+    public function eliminarempleado()
+    {
+        try {
+            $JSONData = file_get_contents("php://input");
+            $dataObject = json_decode($JSONData);
+
+            $empleado = new Empleado();
+
+            $empleado = $dataObject->id;
+
+            $db = Empleado::deleteby("id", "=", $empleado);
+
+            $r = new Success($db);
+            return $r->Send();
+
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
 
     public function ordenes()
     {
