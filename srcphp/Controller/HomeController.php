@@ -233,6 +233,9 @@ class HomeController
             foreach ($imagenes as $imagenObj) {
                 $imagenBase64 = $imagenObj->tuCampoConBase64; // Reemplaza "tuCampoConBase64" con el nombre real de tu campo base64
     
+
+                echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
+
                 // Verificar si la cadena base64 tiene el formato esperado
                 if (strpos($imagenBase64, 'data:image') !== 0) {
                     throw new \Exception('La cadena base64 no parece ser una imagen válida.');
