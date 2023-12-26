@@ -43,7 +43,7 @@ class User extends Models
     {
         $class = get_called_class();
         $c = new $class();
-        $stmt = self::$pdo->prepare("select *  from $c->table  where  user =:user  and contrasena=:contrasena");
+        $stmt = self::$pdo->prepare("SELECT *  FROM $c->table  WHERE  user =:user  AND contrasena=:contrasena");
         $stmt->bindParam(":user", $user);
         $stmt->bindParam(":contrasena", $contrasena);
         $stmt->execute();
