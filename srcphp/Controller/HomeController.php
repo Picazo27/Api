@@ -214,83 +214,83 @@ class HomeController
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception('Error al decodificar JSON: ' . json_last_error_msg());
             }
-
-
+    
             $prod = new Producto();
             $prod->nombre_producto = $dataObject->nombre_producto;
             $prod->descripcion = $dataObject->descripcion;
             $prod->precio = $dataObject->precio;
             $prod->existencia = $dataObject->existencia;
     
+            // Validar campos obligatorios
+            if (empty($prod->nombre_producto) || empty($prod->descripcion) || empty($prod->precio)) {
+                throw new \Exception('Campos obligatorios incompletos.');
+            }
+    
             // Poder guardar imagen
-            $imagenBase64 = $dataObject->imagen;
+            $imagenes = $dataObject->imagen;
     
-            // Verificar si la cadena base64 tiene el formato esperado
-            if (strpos($imagenBase64, 'data:image') !== 0) {
-                throw new \Exception('La cadena base64 no parece ser una imagen válida.');
+            // Verificar cada imagen en el array
+            foreach ($imagenes as $imagenObj) {
+                $imagenBase64 = $imagenObj->tuCampoConBase64; // Reemplaza "tuCampoConBase64" con el nombre real de tu campo base64
+    
+                // Verificar si la cadena base64 tiene el formato esperado
+                if (strpos($imagenBase64, 'data:image') !== 0) {
+                    throw new \Exception('La cadena base64 no parece ser una imagen válida.');
+                }
+    
+                // Eliminar el encabezado de la cadena base64
+                $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+    
+                // Verificar errores en la decodificación de la cadena Base64
+                $imagenData = base64_decode($base64WithoutHeader);
+                if ($imagenData === false) {
+                    throw new \Exception('Error al decodificar la cadena Base64.');
+                }
+    
+                // Usar getimagesize para obtener el tipo MIME
+                $imageInfo = getimagesizefromstring($imagenData);
+                if ($imageInfo === false || !isset($imageInfo['mime'])) {
+                    throw new \Exception('No se pudo obtener información de la imagen.');
+                }
+    
+                $mime_type = $imageInfo['mime'];
+    
+                // Validar la extensión permitida
+                $extensionMap = [
+                    'image/jpeg' => 'jpg',
+                    'image/jpg'  => 'jpg',
+                    'image/png'  => 'png',
+                    'image/svg+xml' => 'svg',
+                ];
+    
+                if (!array_key_exists($mime_type, $extensionMap)) {
+                    throw new \Exception('Formato de imagen no permitido');
+                }
+    
+                $fileExtension = $extensionMap[$mime_type];
+                $nombreImagen = uniqid() . '.' . $fileExtension;
+    
+                $rutaImagen = '/var/www/html/apiPhp/public/img/productos/' . $nombreImagen;
+    
+                // Guardar la imagen en el servidor usando file_put_contents
+                if (file_put_contents($rutaImagen, $imagenData) === false) {
+                    throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
+                }
+    
+                $prod->imagen = $rutaImagen;
+    
+                // Verificar si el proveedor existe
+                $proveedorId = $dataObject->proveedor;
+                $proveedorExistente = Proveedor::find($proveedorId);
+    
+                if (!$proveedorExistente) {
+                    throw new \Exception('El proveedor seleccionado no existe.');
+                }
+    
+                $prod->proveedor = $proveedorId;
+                $prod->categoria = $dataObject->categoria;
+                $prod->save();
             }
-    
-            // Eliminar el encabezado de la cadena base64
-            $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
-    
-            // Verificar errores en la decodificación de la cadena Base64
-            $imagenData = base64_decode($base64WithoutHeader);
-            if ($imagenData === false) {
-                throw new \Exception('Error al decodificar la cadena Base64.');
-            }
-    
-            echo 'Cadena Base64 sin encabezado: ' . $base64WithoutHeader . PHP_EOL;
-    
-            // Usar getimagesize para obtener el tipo MIME
-            $imageInfo = getimagesizefromstring($imagenData);
-            if ($imageInfo === false || !isset($imageInfo['mime'])) {
-                throw new \Exception('No se pudo obtener información de la imagen.');
-            }
-    
-            $mime_type = $imageInfo['mime'];
-    
-            echo 'Tipo MIME: ' . $mime_type . PHP_EOL;
-    
-            // Validar la extensión permitida
-            $extensionMap = [
-                'image/jpeg' => 'jpg',
-                'image/jpg'  => 'jpg',
-                'image/png'  => 'png',
-                'image/svg+xml' => 'svg',
-            ];
-    
-            if (!array_key_exists($mime_type, $extensionMap)) {
-                throw new \Exception('Formato de imagen no permitido');
-            }
-    
-            $fileExtension = $extensionMap[$mime_type];
-            $nombreImagen = uniqid() . '.' . $fileExtension;
-    
-            $rutaImagen = '/var/www/html/apiPhp/public/img/productos/' . $nombreImagen;
-    
-            // Guardar la imagen en el servidor usando file_put_contents
-            if (file_put_contents($rutaImagen, $imagenData) === false) {
-                throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
-            }
-    
-            $prod->imagen = $rutaImagen;
-    
-    $prod->imagen = null;
-    $proveedorId = $dataObject->proveedor;
-
-    // Verificar si el proveedor existe
-    $proveedorExistente = Proveedor::find($proveedorId);
-
-      if (!$proveedorExistente) {
-   throw new \Exception('El proveedor seleccionado no existe.');
-    }
-
-    $prod->proveedor = $proveedorId;
-
-$prod->categoria = $dataObject->categoria;
-$prod->save();
-
-    
     
             $s = new Success($prod);
     
