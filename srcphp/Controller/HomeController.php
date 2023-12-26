@@ -215,27 +215,38 @@ class HomeController
                 throw new \Exception('Error al decodificar JSON: ' . json_last_error_msg());
             }
     
+            // Verificar la existencia de campos obligatorios en el JSON
+            if (!property_exists($dataObject, 'nombre_producto') || !property_exists($dataObject, 'descripcion') || !property_exists($dataObject, 'precio')) {
+                throw new \Exception('Faltan datos obligatorios en el JSON.');
+            }
+    
             $prod = new Producto();
             $prod->nombre_producto = $dataObject->nombre_producto;
             $prod->descripcion = $dataObject->descripcion;
             $prod->precio = $dataObject->precio;
-            $prod->existencia = $dataObject->existencia;
+            $prod->existencia = property_exists($dataObject, 'existencia') ? $dataObject->existencia : null;
     
             // Validar campos obligatorios
             if (empty($prod->nombre_producto) || empty($prod->descripcion) || empty($prod->precio)) {
                 throw new \Exception('Campos obligatorios incompletos.');
             }
     
-            // Poder guardar imagen
-            $imagenes = $dataObject->imagen;
+            // Verificar si el campo de imagen es un array
+            if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
+                throw new \Exception('El campo de imagen no es un array válido.');
+            }
     
             // Verificar cada imagen en el array
-            foreach ($imagenes as $imagenObj) {
-                $imagenBase64 = $imagenObj->tuCampoConBase64; // Reemplaza "tuCampoConBase64" con el nombre real de tu campo base64
+            foreach ($dataObject->imagen as $imagenObj) {
+                // Verificar si la propiedad "tuCampoConBase64" existe en el objeto de imagen
+                if (!property_exists($imagenObj, 'tuCampoConBase64')) {
+                    throw new \Exception('Falta la propiedad "tuCampoConBase64" en el objeto de imagen.');
+                }
     
-
+                $imagenBase64 = $imagenObj->tuCampoConBase64;
+    
                 echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
-
+    
                 // Verificar si la cadena base64 tiene el formato esperado
                 if (strpos($imagenBase64, 'data:image') !== 0) {
                     throw new \Exception('La cadena base64 no parece ser una imagen válida.');
@@ -281,8 +292,10 @@ class HomeController
                 }
     
                 $prod->imagen = $rutaImagen;
+            }
     
-                // Verificar si el proveedor existe
+            // Verificar si el proveedor existe
+            if (property_exists($dataObject, 'proveedor')) {
                 $proveedorId = $dataObject->proveedor;
                 $proveedorExistente = Proveedor::find($proveedorId);
     
@@ -291,9 +304,15 @@ class HomeController
                 }
     
                 $prod->proveedor = $proveedorId;
-                $prod->categoria = $dataObject->categoria;
-                $prod->save();
             }
+    
+            // Verificar si el campo de categoría existe
+            if (property_exists($dataObject, 'categoria')) {
+                $prod->categoria = $dataObject->categoria;
+            }
+    
+            // Guardar el producto después de procesar todas las imágenes
+            $prod->save();
     
             $s = new Success($prod);
     
@@ -303,6 +322,7 @@ class HomeController
             return $s->Send();
         }
     }
+    
     
 
     public function mostrarUsuarios()
