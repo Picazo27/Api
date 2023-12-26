@@ -245,7 +245,7 @@ class HomeController
 
                 
     
-                $imagenBase64 = $imagenObj->imagenBase64;
+                $imagenBase64 = $imagenObj->imagen;
     
                 echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
