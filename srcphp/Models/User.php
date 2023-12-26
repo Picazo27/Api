@@ -38,28 +38,24 @@ class User extends Models
     protected    $table = "users";
 
 
-
-    public static function auth($user, $contrasena):Response
+    public static function auth($user, $contrasena): Response
     {
         $class = get_called_class();
         $c = new $class();
-        $stmt = self::$pdo->prepare("SELECT *  FROM $c->table  WHERE  user =:user  AND contrasena=:contrasena");
+        $stmt = self::$pdo->prepare("SELECT * FROM $c->table WHERE user = :user");
         $stmt->bindParam(":user", $user);
-        $stmt->bindParam(":contrasena", $contrasena);
         $stmt->execute();
-        $resultados = $stmt->fetchAll(PDO::FETCH_CLASS,User::class);
-
-        if ($resultados) {
-//            Auth::setUser($resultados[0]);  pendiente
-            $r=new Success(["usuario"=>$resultados[0],"_token"=>Auth::generateToken([$resultados[0]->id])]);
-           return  $r->Send();
+        $resultados = $stmt->fetchAll(PDO::FETCH_CLASS, User::class);
+    
+        if ($resultados && password_verify($contrasena, $resultados[0]->contrasena)) {
+            $r = new Success(["usuario" => $resultados[0], "_token" => Auth::generateToken([$resultados[0]->id])]);
+            return $r->Send();
         }
-        $r=new Failure(401,"Usuario o contraseña incorrectos");
+    
+        $r = new Failure(401, "Usuario o contraseña incorrectos");
         return $r->Send();
-
     }
     
-
     public function find_name($name)
     {
         $stmt = self::$pdo->prepare("select *  from $this->table  where  nombre=:name");
