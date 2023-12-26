@@ -45,7 +45,8 @@ Router::post('/login', [UserController::class, "login"]);
 Router::post('/registrarempleado',[UserController::class, 'registrarEmpleado']);
 Router::post('/registroproveedor',[UserController::class, 'registroproveedor']);
 
-Router::post('/eliminarempleado',[HomeController::class,"eliminarempleado"])
+Router::post('/eliminarempleado',[HomeController::class,"eliminarempleado"]);
+Router::post('/auth',[UserController::class,"auth"]);
 ?>
 
 

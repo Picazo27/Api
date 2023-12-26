@@ -22,10 +22,10 @@ class UserController
         try {
             $JSONData = file_get_contents("php://input");
             $dataObject = json_decode($JSONData);
-            if (!property_exists($dataObject, "user") || !property_exists($dataObject, "contrasena")) {
+            if (!property_exists($dataObject, "email_usuario") || !property_exists($dataObject, "contrasena_usuario")) {
                 throw new \Exception("Faltan datos");
             }
-            return User::auth($dataObject->user, $dataObject->contrasena);
+            return User::auth($dataObject->email_usuario, $dataObject->contrasena_usuario);
 
         } catch (\Exception $e) {
             $r = new Failure(401, $e->getMessage());
@@ -131,7 +131,7 @@ class UserController
         // Enviar la respuesta al cliente
         echo json_encode($response);
     }
-   
+  
     private function verifyCredentials($email_usuario, $contrasena_usuario) {
         try {
             // Buscar un usuario por correo electrónico
