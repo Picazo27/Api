@@ -205,121 +205,108 @@ class HomeController
     public function Insertarproducto()
 {
     try {
-        // Obtener datos JSON directamente
+        // Obtiene los datos del cuerpo de la solicitud
         $JSONData = file_get_contents("php://input");
-        echo 'JSON recibido: ' . $JSONData . PHP_EOL;
         $dataObject = json_decode($JSONData);
 
-        // Verificar errores en la decodificación
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Error al decodificar JSON: ' . json_last_error_msg());
+        // Verifica si $dataObject es un objeto JSON válido
+        if (!is_object($dataObject)) {
+            throw new \Exception('Formato de datos no válido. Se esperaba un objeto JSON.');
         }
 
-        // Verificar la existencia de campos obligatorios en el JSON
-        if (!property_exists($dataObject, 'nombre_producto') || !property_exists($dataObject, 'descripcion') || !property_exists($dataObject, 'precio')) {
-            throw new \Exception('Faltan datos obligatorios en el JSON.');
+        // Verifica campos obligatorios antes de crear la instancia de Producto
+        $requiredFields = ['nombre_producto', 'descripcion', 'precio', 'existencia', 'imagen', 'proveedor'];
+        foreach ($requiredFields as $field) {
+            if (empty($dataObject->$field)) {
+                throw new \Exception("El campo $field es obligatorio.");
+            }
         }
 
+        // Crea una nueva instancia de Producto
         $prod = new Producto();
         $prod->nombre_producto = $dataObject->nombre_producto;
         $prod->descripcion = $dataObject->descripcion;
         $prod->precio = $dataObject->precio;
-        $prod->existencia = property_exists($dataObject, 'existencia') ? $dataObject->existencia : null;
+        $prod->existencia = $dataObject->existencia;
 
-        // Validar campos obligatorios
-        if (empty($prod->nombre_producto) || empty($prod->descripcion) || empty($prod->precio)) {
-            throw new \Exception('Campos obligatorios incompletos.');
+      $imagenBase64 = $dataObject->imagen;
+ $imagenData = base64_decode($imagenBase64);
+
+ // Validar el tipo MIME de la imagen
+ $finfo = finfo_open();
+ $mime_type = finfo_buffer($finfo, $imagenData, FILEINFO_MIME_TYPE);
+ finfo_close($finfo);
+
+ // Validar la extensión permitida
+ $extensionMap = [
+     'image/jpeg' => 'jpg',
+     'image/jpg' => 'jpg',
+     'image/png' => 'png',
+     'image/svg+xml' => 'svg',
+ ];
+
+ if (!array_key_exists($mime_type, $extensionMap)) {
+     throw new \Exception('Formato de imagen no permitido');
+ }
+
+ $fileExtension = $extensionMap[$mime_type];
+ $nombreImagen = uniqid() . '.' . $fileExtension;
+
+ $rutaImagen = '/var/www/html/apiPhp/public/img' . $nombreImagen;
+
+ file_put_contents($rutaImagen, $imagenData);
+
+ if (file_put_contents($rutaImagen, $imagenData) === false) {
+    throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
+}
+
+        // Asigna la ruta de la imagen al producto
+        $prod->imagen = $rutaImagen;
+
+        
+	$proveedorResponse = $this->proveedor();
+    $proveedores = $proveedorResponse;
+    
+    if (empty($proveedor)) {
+        throw new \Exception('Error al obtener los proveedores');
+    }
+    
+    // Validar si la categoría proporcionada es válida
+    $proveedores = $dataObject->proveedor;
+    $proveedorEncontrado = false;
+    
+    foreach ($proveedores as $proveedor) {
+        if ($proveedor->id == $proveedor) {
+            $proveedorEncontrado = true;
+            break;
+    
         }
+    }
+    if (!$proveedorEncontrado ) {
+        throw new \Exception('El proveedor proporcionado no es válido');
+    }
+    
+    // Asignar la categoría al producto
+    $prod->proveedor = $proveedor; 
+    $prod->proveedor = $dataObject->proveedor;
+        
+        // Asignar la categoría al producto
 
-        // Verificar si el campo de imagen es un array
-        if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
-            throw new \Exception('El campo de imagen no es un array válido.');
-        }
+            // Verificar si el campo de categoría existe
+            if (property_exists($dataObject, 'categoria')) {
+                $prod->categoria = $dataObject->categoria;
+            }  
 
-        // Verificar cada imagen en el array
-        foreach ($dataObject->imagen as $imagenObj) {
-            // Verificar si la propiedad "imagenBase64" existe en el objeto de imagen
-            if (!property_exists($imagenObj, 'imagen')) {
-                throw new \Exception('Falta la propiedad "imagen" en el objeto de imagen.');
-            }
-
-            $imagenBase64 = $imagenObj->imagen;
-
-            echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
-
-            // Verificar si la cadena base64 tiene el formato esperado
-            if (strpos($imagenBase64, 'data:image') !== 0) {
-                throw new \Exception('La cadena base64 no parece ser una imagen válida.');
-            }
-
-            // Eliminar el encabezado de la cadena base64
-            $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
-
-            // Verificar errores en la decodificación de la cadena Base64
-            $imagenData = base64_decode($base64WithoutHeader);
-            if ($imagenData === false) {
-                throw new \Exception('Error al decodificar la cadena Base64.');
-            }
-
-            // Usar getimagesize para obtener el tipo MIME
-            $imageInfo = getimagesizefromstring($imagenData);
-            if ($imageInfo === false || !isset($imageInfo['mime'])) {
-                throw new \Exception('No se pudo obtener información de la imagen.');
-            }
-
-            $mime_type = $imageInfo['mime'];
-
-            // Validar la extensión permitida
-            $extensionMap = [
-                'image/jpeg' => 'jpg',
-                'image/jpg'  => 'jpg',
-                'image/png'  => 'png',
-                'image/svg+xml' => 'svg',
-            ];
-
-            if (!array_key_exists($mime_type, $extensionMap)) {
-                throw new \Exception('Formato de imagen no permitido');
-            }
-
-            $fileExtension = $extensionMap[$mime_type];
-            $nombreImagen = uniqid() . '.' . $fileExtension;
-
-            $rutaImagen = '/var/www/html/apiPhp/public/img/' . $nombreImagen;
-
-            // Guardar la imagen en el servidor usando file_put_contents
-            if (file_put_contents($rutaImagen, $imagenData) === false) {
-                throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
-            }
-
-            $prod->imagen = $rutaImagen;
-        }
-
-        // Verificar si el proveedor existe
-        if (property_exists($dataObject, 'proveedor')) {
-            $proveedorId = $dataObject->proveedor;
-            $proveedorExistente = Proveedor::find($proveedorId);
-
-            if (!$proveedorExistente) {
-                throw new \Exception('El proveedor seleccionado no existe.');
-            }
-
-            $prod->proveedor = $proveedorId;
-        }
-
-        // Verificar si el campo de categoría existe
-        if (property_exists($dataObject, 'categoria')) {
-            $prod->categoria = $dataObject->categoria;
-        }
-
-        // Guardar el producto después de procesar todas las imágenes
+        // Guarda el producto
         $prod->save();
 
-        $s = new Success($prod);
-
-        return $s->Send();
+        // Envía una respuesta exitosa
+        $response = new Success(['producto_id' => $prod->id, 'mensaje' => 'Producto guardado exitosamente']);
+        return $response->Send();
     } catch (\Exception $e) {
-        $s = new Failure(401, $e->getMessage());
-        return $s->Send();
+        // Captura cualquier excepción y envía una respuesta de error
+        $response = new Failure(401, $e->getMessage());
+        return $response->Send();
     }
 }
 
