@@ -215,7 +215,7 @@ class HomeController
         }
 
         // Verifica campos obligatorios antes de crear la instancia de Producto
-        $requiredFields = ['nombre_producto', 'descripcion', 'precio', 'existencia', 'imagen', 'proveedor'];
+        $requiredFields = ['nombre_producto', 'descripcion', 'precio', 'existencia', 'imagen'];
         foreach ($requiredFields as $field) {
             if (empty($dataObject->$field)) {
                 throw new \Exception("El campo $field es obligatorio.");
