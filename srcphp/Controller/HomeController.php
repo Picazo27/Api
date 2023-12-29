@@ -230,6 +230,7 @@ class HomeController
         $prod->existencia = $dataObject->existencia;
 
         // Procesa cada imagen del array
+        $rutaImagenes = [];
         foreach ($dataObject->imagen as $imagenObj) {
             // Verificar si la propiedad "imagen" existe en el objeto de imagen
             if (!property_exists($imagenObj, 'imagen')) {
@@ -261,15 +262,10 @@ class HomeController
             $fileExtension = $extensionMap[$mime_type];
             $nombreImagen = uniqid() . '.' . $fileExtension;
 
-            $rutaImagen = '/var/www/html/Api/public/img/' . $nombreImagen;
+            $rutaImagenes[] = $nombreImagen;
 
-            // Guardar la imagen en el servidor usando file_put_contents
-            if (file_put_contents($rutaImagen, $imagenData) === false) {
-                throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
-            }
+            $prod->imagen = json_encode($rutaImagenes);
 
-            // Asignar la ruta de la imagen al producto
-            $prod->imagen = $rutaImagen;
         }
 
         // Asignar la categoría al producto
