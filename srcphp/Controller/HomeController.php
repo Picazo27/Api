@@ -287,17 +287,25 @@ class HomeController
             $prod->imagen = json_encode($rutaImagenes);
     
             $proveedorId = $dataObject->proveedor;
-            $proveedores = $this->proveedor();
 
             // Verificar si el proveedor proporcionado es válido
-            $proveedorEncontrado = $this->validarProveedor($proveedorId, $proveedores);
-            // Aquí deberías tener lógica para validar el proveedor según tus necesidades
+            $proveedores = $this->proveedor();
+    
+            // Buscar el proveedor por ID
+            $proveedorEncontrado = false;
+            foreach ($proveedores as $proveedor) {
+                if ($proveedor->id == $proveedorId) {
+                    $proveedorEncontrado = true;
+                    break;
+                }
+            }
     
             if (!$proveedorEncontrado) {
                 throw new \Exception('El proveedor proporcionado no es válido');
             }
     
             // Asignar la categoría al producto
+    
             $prod->proveedor = $proveedorId;
     
             // Guarda el producto
