@@ -305,7 +305,6 @@ class HomeController
             }
     
             // Asignar la categoría al producto
-    
             $prod->proveedor = $proveedorId;
     
             // Guarda el producto
