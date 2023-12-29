@@ -202,6 +202,18 @@ class HomeController
         }
     }
 
+    private function validarProveedor($proveedorId, $proveedores)
+{
+    foreach ($proveedores as $proveedor) {
+        if ($proveedor->id == $proveedorId) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
     public function Insertarproducto()
     {
         try {
@@ -275,9 +287,10 @@ class HomeController
             $prod->imagen = json_encode($rutaImagenes);
     
             $proveedorId = $dataObject->proveedor;
+            $proveedores = $this->proveedor();
 
             // Verificar si el proveedor proporcionado es válido
-            $proveedorEncontrado = false;
+            $proveedorEncontrado = $this->validarProveedor($proveedorId, $proveedores);
             // Aquí deberías tener lógica para validar el proveedor según tus necesidades
     
             if (!$proveedorEncontrado) {
