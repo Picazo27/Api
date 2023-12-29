@@ -288,24 +288,14 @@ class HomeController
     
             $proveedorId = $dataObject->proveedor;
 
-            // Verificar si el proveedor proporcionado es válido
-            $proveedores = $this->proveedor();
-    
-            // Buscar el proveedor por ID
-            $proveedorEncontrado = false;
-            foreach ($proveedores as $proveedor) {
-                if ($proveedor->id == $proveedorId) {
-                    $proveedorEncontrado = true;
-                    break;
-                }
-            }
-    
-            if (!$proveedorEncontrado) {
+            $proveedor = Proveedor::find($proveedorId);
+
+            if (!$proveedor) {
                 throw new \Exception('El proveedor proporcionado no es válido');
             }
     
             // Asignar la categoría al producto
-            $prod->proveedor = $proveedorId;
+            $prod->proveedor = $proveedor->id;
     
             // Guarda el producto
             $prod->save();
