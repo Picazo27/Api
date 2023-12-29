@@ -273,17 +273,31 @@ class HomeController
             $prod->categoria = $dataObject->categoria;
         }
 
-        // Verificar si el proveedor existe
-        if (property_exists($dataObject, 'proveedor')) {
-            $proveedorId = $dataObject->proveedor;
-            $proveedorExistente = Proveedor::find($proveedorId);
-
-            if (!$proveedorExistente) {
-                throw new \Exception('El proveedor seleccionado no existe.');
-            }
-
-            $prod->proveedor = $proveedorId;
+        $proveedorResponse = $this->proveedor();
+        $proveedores = $proveedorResponse;
+        
+        if (empty($proveedor)) {
+            throw new \Exception('Error al obtener los proveedores');
         }
+        
+        // Validar si la categoría proporcionada es válida
+        $proveedores = $dataObject->proveedor;
+        $proveedorEncontrado = false;
+        
+        foreach ($proveedores as $proveedor) {
+            if ($proveedor->id == $proveedor) {
+                $proveedorEncontrado = true;
+                break;
+        
+            }
+        }
+        if (!$proveedorEncontrado ) {
+            throw new \Exception('El proveedor proporcionado no es válido');
+        }
+        
+        // Asignar la categoría al producto
+        $prod->proveedor = $proveedor; 
+        $prod->proveedor = $dataObject->proveedor;
 
         // Guarda el producto
         $prod->save();
