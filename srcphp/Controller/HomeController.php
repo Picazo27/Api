@@ -287,7 +287,7 @@ class HomeController
             }
     
             // Asignar la ruta de la imagen al producto
-            $prod->imagen = $rutaImagen;
+            $prod->imagen = [$rutaImagen];
     
             $proveedorId = $dataObject->proveedor;
 
