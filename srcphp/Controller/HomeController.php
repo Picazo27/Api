@@ -242,12 +242,13 @@ class HomeController
             $prod->existencia = $dataObject->existencia;
     
             // Procesa cada imagen del array
-            $rutaImagenes = [];
+            $rutaImagen = ''; // Variable para almacenar la ruta de la imagen
             foreach ($dataObject->imagen as $imagenObj) {
                 // Verificar si la propiedad "imagen" existe en el objeto de imagen
                 if (!property_exists($imagenObj, 'imagen')) {
                     throw new \Exception('Falta la propiedad "imagen" en el objeto de imagen.');
                 }
+            
     
                 // Obtener la cadena Base64 desde el objeto imagen
                 $imagenBase64 = $imagenObj->imagen;
@@ -275,7 +276,9 @@ class HomeController
                 $nombreImagen = uniqid() . '.' . $fileExtension;
     
                 // Almacena directamente la ruta de la imagen como un string
-                $rutaImagenes[] = $nombreImagen;
+                $rutaImagen = $nombreImagen;
+                break;
+
             }
     
             // Asignar la categoría al producto
@@ -284,7 +287,7 @@ class HomeController
             }
     
             // Asignar la ruta de la imagen al producto
-            $prod->imagen = json_encode($rutaImagenes);
+            $prod->imagen = $rutaImagen;
     
             $proveedorId = $dataObject->proveedor;
 
