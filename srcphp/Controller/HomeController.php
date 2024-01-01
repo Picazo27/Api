@@ -241,30 +241,51 @@ class HomeController
             $prod->precio = $dataObject->precio;
             $prod->existencia = $dataObject->existencia;
     
-            // Procesa cada imagen del array
-            $rutaImagen = ''; // Variable para almacenar la ruta de la imagen
+             // Verificar si el campo de imagen es un array
+             if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
+                throw new \Exception('El campo de imagen no es un array válido.');
+            }
+    
+            // Verificar cada imagen en el array
             foreach ($dataObject->imagen as $imagenObj) {
-                // Verificar si la propiedad "imagen" existe en el objeto de imagen
-                if (!property_exists($imagenObj, 'imagen')) {
-                    throw new \Exception('Falta la propiedad "imagen" en el objeto de imagen.');
+                // Verificar si la propiedad "tuCampoConBase64" existe en el objeto de imagen
+            if (!property_exists($imagenObj, 'imagenBase64')) {
+            throw new \Exception('Falta la propiedad "imagenBase64" en el objeto de imagen.');
                 }
-            
+
+                
     
-                // Obtener la cadena Base64 desde el objeto imagen
-                $imagenBase64 = $imagenObj->imagen;
+                $imagenBase64 = $imagenObj->imagenBase64;
     
-                $imagenData = base64_decode($imagenBase64);
+                echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
-                // Validar el tipo MIME de la imagen
-                $finfo = finfo_open();
-                $mime_type = finfo_buffer($finfo, $imagenData, FILEINFO_MIME_TYPE);
-                finfo_close($finfo);
+                // Verificar si la cadena base64 tiene el formato esperado
+                if (strpos($imagenBase64, 'data:image') !== 0) {
+                    throw new \Exception('La cadena base64 no parece ser una imagen válida.');
+                }
+    
+                // Eliminar el encabezado de la cadena base64
+                $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+    
+                // Verificar errores en la decodificación de la cadena Base64
+                $imagenData = base64_decode($base64WithoutHeader);
+                if ($imagenData === false) {
+                    throw new \Exception('Error al decodificar la cadena Base64.');
+                }
+    
+                // Usar getimagesize para obtener el tipo MIME
+                $imageInfo = getimagesizefromstring($imagenData);
+                if ($imageInfo === false || !isset($imageInfo['mime'])) {
+                    throw new \Exception('No se pudo obtener información de la imagen.');
+                }
+    
+                $mime_type = $imageInfo['mime'];
     
                 // Validar la extensión permitida
                 $extensionMap = [
                     'image/jpeg' => 'jpg',
-                    'image/jpg' => 'jpg',
-                    'image/png' => 'png',
+                    'image/jpg'  => 'jpg',
+                    'image/png'  => 'png',
                     'image/svg+xml' => 'svg',
                 ];
     
@@ -275,11 +296,16 @@ class HomeController
                 $fileExtension = $extensionMap[$mime_type];
                 $nombreImagen = uniqid() . '.' . $fileExtension;
     
-                // Almacena directamente la ruta de la imagen como un string
-                $rutaImagen = $nombreImagen;
-                break;
-
+                $rutaImagen = '/var/www/html/Api/public/img/productos/' . $nombreImagen;
+    
+                // Guardar la imagen en el servidor usando file_put_contents
+                if (file_put_contents($rutaImagen, $imagenData) === false) {
+                    throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
+                }
+    
+                $prod->imagen = $rutaImagen;
             }
+    
     
             // Asignar la categoría al producto
             if (property_exists($dataObject, 'categoria')) {
@@ -287,7 +313,6 @@ class HomeController
             }
     
             // Asignar la ruta de la imagen al producto
-            $prod->imagen = [$rutaImagen];
     
             $proveedorId = $dataObject->proveedor;
 
