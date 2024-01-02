@@ -266,13 +266,23 @@ public function Insertarproducto()
             }
 
             // Usar getimagesize para obtener el tipo MIME
-            $imageInfo = getimagesizefromstring($imagenData);
+          // Usar getimagesize para obtener el tipo MIME
+$imageInfo = @getimagesizefromstring($imagenData);
 
-            if ($imageInfo === false || !isset($imageInfo['mime'])) {
-                throw new \Exception('No se pudo obtener información de la imagen.');
-            }
+if ($imageInfo === false || !isset($imageInfo['mime'])) {
+    // Intentar obtener el tipo MIME de otra manera
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_buffer($finfo, $imagenData);
 
-            $mime_type = $imageInfo['mime'];
+    if ($mime_type === false) {
+        throw new \Exception('No se pudo obtener información de la imagen.');
+    }
+
+    finfo_close($finfo);
+} else {
+    $mime_type = $imageInfo['mime'];
+}
+
 
             // Validar la extensión permitida
             $extensionMap = [
