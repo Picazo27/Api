@@ -33,8 +33,7 @@ class HomeController
     public function mostrarProducto()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos");
+            $productos = Table::query("SELECT * FROM productos");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;

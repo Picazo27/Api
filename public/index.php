@@ -48,6 +48,8 @@ Router::post('/registroproveedor',[UserController::class, 'registroproveedor']);
 
 Router::post('/eliminarempleado',[HomeController::class,"eliminarempleado"]);
 Router::post('/auth',[UserController::class,"auth"]);
+
+Router::post('/ordenventa',[HomeController::class,"ordenventa"]);
 ?>
 
 
