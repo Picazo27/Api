@@ -264,6 +264,8 @@ public function Insertarproducto()
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime_type = finfo_buffer($finfo, $imagenData);
 
+            echo 'Tipo MIME: ' . $mime_type . PHP_EOL;
+
             if ($mime_type === false) {
                 throw new \Exception('No se pudo obtener información de la imagen.');
             }
