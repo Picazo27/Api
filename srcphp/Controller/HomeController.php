@@ -260,29 +260,15 @@ public function Insertarproducto()
             // Verificar errores en la decodificación de la cadena Base64
             $imagenData = base64_decode($base64WithoutHeader);
 
-            // Verificar si la decodificación tuvo éxito
-            if ($imagenData === false) {
-                throw new \Exception('Error al decodificar la cadena Base64.');
+            // Usar finfo para obtener el tipo MIME
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_buffer($finfo, $imagenData);
+
+            if ($mime_type === false) {
+                throw new \Exception('No se pudo obtener información de la imagen.');
             }
 
-            // Usar getimagesize para obtener el tipo MIME
-          // Usar getimagesize para obtener el tipo MIME
-$imageInfo = @getimagesizefromstring($imagenData);
-
-if ($imageInfo === false || !isset($imageInfo['mime'])) {
-    // Intentar obtener el tipo MIME de otra manera
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime_type = finfo_buffer($finfo, $imagenData);
-
-    if ($mime_type === false) {
-        throw new \Exception('No se pudo obtener información de la imagen.');
-    }
-
-    finfo_close($finfo);
-} else {
-    $mime_type = $imageInfo['mime'];
-}
-
+            finfo_close($finfo);
 
             // Validar la extensión permitida
             $extensionMap = [
@@ -309,8 +295,8 @@ if ($imageInfo === false || !isset($imageInfo['mime'])) {
             $prod->imagen = $rutaImagen;
         }
 
-        // Asignar la categoría al producto
-        if (property_exists($dataObject, 'categoria')) {
+        // Asignar la categoría al producto si es un array
+        if (property_exists($dataObject, 'categoria') && is_array($dataObject->categoria)) {
             $prod->categoria = $dataObject->categoria;
         }
 
@@ -339,6 +325,7 @@ if ($imageInfo === false || !isset($imageInfo['mime'])) {
         return $response->Send();
     }
 }
+
 
 
 
