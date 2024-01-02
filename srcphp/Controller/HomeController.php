@@ -281,7 +281,7 @@ public function Insertarproducto()
             ];
 
             if (!array_key_exists($mime_type, $extensionMap)) {
-                throw new \Exception('Formato de imagen no permitido');
+                throw new \Exception('Formato de imagen no permitido Tipo MIME: ' . $mime_type);
             }
 
             $fileExtension = $extensionMap[$mime_type];
