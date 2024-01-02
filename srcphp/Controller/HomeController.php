@@ -249,13 +249,13 @@ class HomeController
             // Verificar cada imagen en el array
             foreach ($dataObject->imagen as $imagenObj) {
                 // Verificar si la propiedad "tuCampoConBase64" existe en el objeto de imagen
-            if (!property_exists($imagenObj, 'imagenBase64')) {
-            throw new \Exception('Falta la propiedad "imagenBase64" en el objeto de imagen.');
+                if (!property_exists($imagenObj, 'imagen')) {
+                    throw new \Exception('Falta la propiedad "imagenBase64" en el objeto de imagen.');
                 }
 
                 
     
-                $imagenBase64 = $imagenObj->imagenBase64;
+                $imagenBase64 = $imagenObj->imagen;
     
                 echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
