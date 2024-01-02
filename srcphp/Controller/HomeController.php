@@ -333,9 +333,11 @@ class HomeController
             return $response->Send();
         } catch (\Exception $e) {
             // Captura cualquier excepción y envía una respuesta de error
-            $response = new Failure(401, $e->getMessage());
+            $statusCode = ($e instanceof \InvalidArgumentException) ? 400 : 500;
+            $response = new Failure($statusCode, $e->getMessage());
             return $response->Send();
         }
+        
     }
     
 
