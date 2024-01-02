@@ -240,6 +240,7 @@ public function Insertarproducto()
         $prod->descripcion = $dataObject->descripcion;
         $prod->precio = $dataObject->precio;
         $prod->existencia = $dataObject->existencia;
+        $prod->categoria = $dataObject->categoria;
 
         if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
             throw new \Exception('El campo de imagen no es un array válido.');
@@ -300,11 +301,7 @@ public function Insertarproducto()
             
             $prod->imagen = $rutaImagen;
         }
-                    
-        // Asignar la categoría al producto si es un array
-        if (property_exists($dataObject, 'categoria') && is_array($dataObject->categoria)) {
-            $prod->categoria = $dataObject->categoria;
-        }
+
 
         // Asignar la ruta de la imagen al producto
         $proveedorId = $dataObject->proveedor;
