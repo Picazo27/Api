@@ -241,40 +241,36 @@ class HomeController
             $prod->precio = $dataObject->precio;
             $prod->existencia = $dataObject->existencia;
     
-             // Verificar si el campo de imagen es un array
-             if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
+            if (!property_exists($dataObject, 'imagen') || !is_array($dataObject->imagen)) {
                 throw new \Exception('El campo de imagen no es un array válido.');
             }
     
             // Verificar cada imagen en el array
             foreach ($dataObject->imagen as $imagenObj) {
                 // Verificar si la propiedad "tuCampoConBase64" existe en el objeto de imagen
-                if (!property_exists($imagenObj, 'imagen')) {
-                    throw new \Exception('Falta la propiedad "imagenBase64" en el objeto de imagen.');
+            if (!property_exists($imagenObj, 'imagenBase64')) {
+            throw new \Exception('Falta la propiedad "imagenBase64" en el objeto de imagen.');
                 }
 
                 
     
-                $imagenBase64 = $imagenObj->imagen;
+                $imagenBase64 = $imagenObj->imagenBase64;
     
                 echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
                 // Verificar si la cadena base64 tiene el formato esperado
-                // Verificar si la cadena base64 tiene el formato esperado
-if (!preg_match('/^data:image\/\w+;base64,/', $imagenBase64)) {
-    throw new \Exception('La cadena base64 no parece ser una imagen válida.');
-}
-
-// Eliminar el encabezado de la cadena base64
-$base64WithoutHeader = preg_replace('/^data:image\/\w+;base64,/', '', $imagenBase64);
-
-// Verificar errores en la decodificación de la cadena Base64
-$imagenData = base64_decode($base64WithoutHeader, true);
-
-if ($imagenData === false || !imagecreatefromstring($imagenData)) {
-    throw new \Exception('La cadena base64 no se pudo decodificar o no representa una imagen válida.');
-}
-
+                if (strpos($imagenBase64, 'data:image') !== 0) {
+                    throw new \Exception('La cadena base64 no parece ser una imagen válida.');
+                }
+    
+                // Eliminar el encabezado de la cadena base64
+                $base64WithoutHeader = substr($imagenBase64, strpos($imagenBase64, ',') + 1);
+    
+                // Verificar errores en la decodificación de la cadena Base64
+                $imagenData = base64_decode($base64WithoutHeader);
+                if ($imagenData === false) {
+                    throw new \Exception('Error al decodificar la cadena Base64.');
+                }
     
                 // Usar getimagesize para obtener el tipo MIME
                 $imageInfo = getimagesizefromstring($imagenData);
