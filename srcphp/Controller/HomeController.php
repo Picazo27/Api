@@ -274,32 +274,33 @@ public function Insertarproducto()
 
             // Validar la extensión permitida
             // Validar la extensión permitida
-$extensionMap = [
-    'image/jpeg' => 'jpg',
-    'image/jpg'  => 'jpg',
-    'image/png'  => 'png',
-    'image/svg+xml' => 'svg',
-];
-
-// Permitir application/octet-stream como tipo MIME válido
-if (!array_key_exists($mime_type, $extensionMap) && $mime_type !== 'application/octet-stream') {
-    throw new \Exception('Formato de imagen no permitido. Tipo MIME: ' . $mime_type);
-}
-
-
-            $fileExtension = $extensionMap[$mime_type];
+            $extensionMap = [
+                'image/jpeg' => 'jpg',
+                'image/jpg'  => 'jpg',
+                'image/png'  => 'png',
+                'image/svg+xml' => 'svg',
+            ];
+            
+            // Permitir application/octet-stream como tipo MIME válido
+            if (!array_key_exists($mime_type, $extensionMap) && $mime_type !== 'application/octet-stream') {
+                throw new \Exception('Formato de imagen no permitido. Tipo MIME: ' . $mime_type);
+            }
+            
+            // Obtener la extensión del archivo
+            $fileExtension = $extensionMap[$mime_type] ?? 'jpg';
+            
             $nombreImagen = uniqid() . '.' . $fileExtension;
-
+            
             $rutaImagen = '/var/www/html/Api/public/img/' . $nombreImagen;
-
+            
             // Guardar la imagen en el servidor usando file_put_contents
             if (file_put_contents($rutaImagen, $imagenData) === false) {
                 throw new \Exception('Error al guardar la imagen: ' . error_get_last()['message']);
             }
-
+            
             $prod->imagen = $rutaImagen;
         }
-
+                    
         // Asignar la categoría al producto si es un array
         if (property_exists($dataObject, 'categoria') && is_array($dataObject->categoria)) {
             $prod->categoria = $dataObject->categoria;
