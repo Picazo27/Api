@@ -273,16 +273,19 @@ public function Insertarproducto()
             finfo_close($finfo);
 
             // Validar la extensión permitida
-            $extensionMap = [
-                'image/jpeg' => 'jpg',
-                'image/jpg'  => 'jpg',
-                'image/png'  => 'png',
-                'image/svg+xml' => 'svg',
-            ];
+            // Validar la extensión permitida
+$extensionMap = [
+    'image/jpeg' => 'jpg',
+    'image/jpg'  => 'jpg',
+    'image/png'  => 'png',
+    'image/svg+xml' => 'svg',
+];
 
-            if (!array_key_exists($mime_type, $extensionMap)) {
-                throw new \Exception('Formato de imagen no permitido Tipo MIME: ' . $mime_type);
-            }
+// Permitir application/octet-stream como tipo MIME válido
+if (!array_key_exists($mime_type, $extensionMap) && $mime_type !== 'application/octet-stream') {
+    throw new \Exception('Formato de imagen no permitido. Tipo MIME: ' . $mime_type);
+}
+
 
             $fileExtension = $extensionMap[$mime_type];
             $nombreImagen = uniqid() . '.' . $fileExtension;
