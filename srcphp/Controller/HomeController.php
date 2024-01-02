@@ -253,7 +253,6 @@ public function Insertarproducto()
             }
             
             $imagenBase64 = $imagenObj->imagen;
-            echo 'Cadena Base64: ' . $imagenBase64 . PHP_EOL;
     
             // Verificar si la cadena base64 tiene el formato esperado
             if (strpos($imagenBase64, 'data:image') !== 0) {
