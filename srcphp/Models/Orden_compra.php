@@ -1,6 +1,6 @@
 <?php
 
-use proyecto\Models\Models;
+namespace proyecto\Models;
 
 class orden_compra extends Models
 {

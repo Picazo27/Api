@@ -12,11 +12,14 @@ use proyecto\Models\User;
 use proyecto\Models\Empleado;
 use proyecto\Conexion;
 use proyecto\Models\orden_venta;
+use proyecto\Models\detalle_orden_venta;
+use proyecto\Models\detalle_orden_compra;
+use proyecto\Models\orden_compra;
 
-class UserController
+class VentaController
 {
 
- /*   public function ingresarpedido()
+   public function ordenventa()
     {
         try{
 
@@ -24,44 +27,21 @@ class UserController
             $dataObject = json_decode($JSONData);
 
             $pedidos = new orden_venta();
-            $pedidos->fecha_realizado_pedido = $fechaActual;
-            $pedidos->hora_realizado_pedido = $hora_actual;
-            $pedidos->hora_entrega_pedido = $dataObject->hora_entrega_pedido;
-            $pedidos->info_pedido = $dataObject->info_pedido;
-            $pedidos->estado_pedido = "En proceso";
-            $pedidos->op_pedido = $dataObject->op_pedido;
-            $pedidos->id_empleado = 1;
-            $pedidos->nombre_cliente_pedido = $dataObject->nombre_cliente_pedido;
-            $pedidos->total_pedido = $dataObject->total_pedido;
+            $pedidos->forma_pago = $dataObject->forma_pago;
+            $pedidos->estatus = "en espera";
+            $pedidos->cliente= $dataObject->cliente;
             $pedidos->save();
 
-            $detalle_pedido = new detalle_pedido();
-            $detalle_pedido->cantidad_producto = $dataObject->cantidad_producto;
-            $detalle_pedido->precio_unitario = $dataObject->precio_unitario;
-            $detalle_pedido->nombre_producto = $dataObject->nombre_producto;
-            $detalle_pedido->id_producto = $dataObject->id_producto;
-            $detalle_pedido->subtotal_pedido = $dataObject->subtotal_pedido;
-            $detalle_pedido->id_pedido = $pedidos->id;
-            $detalle_pedido->tipo_pago_pedido = "Efectivo";
+            $detalle_pedido = new detalle_orden_venta();
+            $detalle_pedido->orden = $pedidos->id;
+            $detalle_pedido->producto = $dataObject->producto;
+            $detalle_pedido->cantidad = $dataObject->cantidad;
+            $detalle_pedido->precio = $dataObject->precio;
             $detalle_pedido->save();
-
-            $detalles_pedido_tipo_cafe = new detalle_pedido_tipo_cafe();
-            $detalles_pedido_tipo_cafe->nom_cafe = $dataObject->nom_cafe;
-            $detalles_pedido_tipo_cafe->id_detalle_pedido = $detalle_pedido->id;
-            $detalles_pedido_tipo_cafe->id_tipo_cafe = $dataObject->id_tipo_cafe;
-            $detalles_pedido_tipo_cafe->save();
-
-            $detalles_pedido_pe = new detalle_pedido_pe();
-            $detalles_pedido_pe->precio_pe = $dataObject->precio_pe;
-            $detalles_pedido_pe->id_detalle_pedido = $detalle_pedido->id;
-            $detalles_pedido_pe->id_producto_extra = $dataObject->id_producto_extra;
-            $detalles_pedido_pe->save();
-
+           
             $respone = array(
                 'pedido' => $pedidos,
-                'detalle_pedido' => $detalle_pedido,
-                'detalles_pedido_tipo_cafe' => $detalles_pedido_tipo_cafe,
-                'detalles_pedido' => $detalles_pedido_pe,
+                'detalle_pedido' => $detalle_pedido
             );
 
             $r = new Success($respone);
@@ -72,6 +52,42 @@ class UserController
         }
     }
 
-    */
+    public function ordencompra()
+{
+    try{
+
+        $JSONData = file_get_contents("php://input");
+        $dataObject = json_decode($JSONData);
+        $proveedorId = $dataObject->proveedor;
+
+        $compra = new orden_compra();
+        $proveedor = Proveedor::find($proveedorId);
+
+        if (!$proveedor) {
+            throw new \Exception('El proveedor proporcionado no es válido');
+        }
+        $compra->proveedor = $proveedor->id;
+        $compra->save();
+
+        $detalle_compra = new detalle_orden_compra();
+        $detalle_compra->orden = $compra->id;
+        $detalle_compra->producto = $dataObject->producto;
+        $detalle_compra->cantidad = $dataObject->cantidad;
+        $detalle_compra->precio = $dataObject->precio;
+        $detalle_compra->save();
+       
+        $respone = array(
+            'compra' => $compra,
+            'detalle_compra' => $detalle_compra
+        );
+
+        $r = new Success($respone);
+        return $r->Send();
+    } catch (\Exception $e) {
+        $s = new Failure(401, $e->getMessage());
+        return $s->Send();
+    }
+}
+
 
 }
