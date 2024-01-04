@@ -260,7 +260,9 @@ class UserController
     public function cliente()
     {
         try {
-            $productos = Table::query("SELECT * FROM users");
+            $productos = Table::query("SELECT * FROM users
+            inner join direccion_user on users.id = direccion_user = id_user
+            inner join direcciones on direcciones.id = direccion_user = id_direccion");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
