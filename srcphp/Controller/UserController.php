@@ -257,5 +257,17 @@ class UserController
         }
     }
     
+    public function cliente()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM users");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
 
 }
