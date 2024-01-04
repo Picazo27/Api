@@ -433,7 +433,7 @@ public function direcciones()
 {
     try {
         $productos = Table::query("SELECT * FROM direcciones
-        inner join direccion_user on direcciones.id = direccion_user = id_direccion");
+        inner join direccion_user on direcciones.id = direccion_user.id_direccion");
         $productos = new Success($productos);
         $productos->Send();
         return $productos;
