@@ -58,7 +58,7 @@ class UserController
         $user->user = $dataObject->user;
         $user->telefono = $dataObject->telefono;
         $user->contrasena = password_hash($dataObject->contrasena, PASSWORD_DEFAULT);
-        $user->roles = 'cliente';
+        $user->roles = 'administrador';
         $user->save();
 
         // Crear la relación en la tabla direccion_user

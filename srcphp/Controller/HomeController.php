@@ -429,6 +429,20 @@ public function registrarEmpleado()
     }
 }
 
+public function direcciones()
+{
+    try {
+        $productos = Table::query("SELECT * FROM direcciones
+        inner join direccion_user on direcciones.id = direccion_user = id_direccion");
+        $productos = new Success($productos);
+        $productos->Send();
+        return $productos;
+    } catch (\Exception $e) {
+        $s = new Failure(401, $e->getMessage());
+        return $s->Send();
+    }
+}
+
 
 }
 
