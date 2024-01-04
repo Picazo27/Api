@@ -2,7 +2,7 @@
 
 namespace proyecto\Models;
 
-class orden_venta extends Models
+class Orden_venta extends Models
 {
     public $id;
     public $fecha;
