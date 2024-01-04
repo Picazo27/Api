@@ -432,7 +432,8 @@ public function registrarEmpleado()
 public function direcciones()
 {
     try {
-        $productos = Table::query("SELECT * FROM direcciones
+        $productos = Table::query("SELECT nombre,RFC,concat(direcciones.calle,' ',direcciones.numero, ' ', direcciones.colonia, ' ' ,
+        direcciones.codigo_postal) as direccion FROM direcciones
         inner join direccion_user on direcciones.id = direccion_user.id_direccion");
         $productos = new Success($productos);
         $productos->Send();
