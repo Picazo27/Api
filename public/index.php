@@ -4,6 +4,7 @@ namespace proyecto;
 require("../vendor/autoload.php");
 use proyecto\Controller\HomeController;
 use proyecto\Controller\UserController;
+use proyecto\Controller\VentaController;
 use proyecto\Controller\crearPersonaController;
 use proyecto\Models\User;
 use proyecto\Response\Failure;
@@ -49,7 +50,7 @@ Router::post('/registroproveedor',[UserController::class, 'registroproveedor']);
 Router::post('/eliminarempleado',[HomeController::class,"eliminarempleado"]);
 Router::post('/auth',[UserController::class,"auth"]);
 
-Router::post('/ordenventa',[HomeController::class,"ordenventa"]);
+Router::post('/ordenventa',[VentaController::class,"ordenventa"]);
 
 Router::get('/cliente',[UserController::class,"cliente"]);
 Router::get('/direcciones',[HomeController::class,"direcciones"]);
