@@ -52,7 +52,7 @@ Router::post('/auth',[UserController::class,"auth"]);
 Router::post('/ordenventa',[HomeController::class,"ordenventa"]);
 
 Router::get('/cliente',[UserController::class,"cliente"]);
-Router::get('/direcciones',[UserController::class,"direcciones"]);
+Router::get('/direcciones',[HomeController::class,"direcciones"]);
 
 ?>
 
