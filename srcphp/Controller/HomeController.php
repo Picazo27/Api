@@ -43,7 +43,9 @@ class HomeController
             $dataObject = json_decode($JSONData);
 
             $pedidos = new Orden_venta();
+            $pedidos->fecha = date('Y-m-d');             
             $pedidos->forma_pago = $dataObject->forma_pago;
+            $pedidos->hora_recibida = date('H:i:s'); 
             $pedidos->estatus = "en espera";
             $pedidos->cliente= $dataObject->cliente;
             $pedidos->save();
