@@ -82,6 +82,21 @@ class HomeController
         }
     }
 
+    public function mostrarP()
+    {
+        try {
+            $productos = Table::query("SELECT nombre_producto, categoria, precio, cantidad,
+            precio, nombre_proveedor FROM productos
+            inner join proveedores on proveedores.id = productos.proveedor");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
     public function prov()
     {
         try {
