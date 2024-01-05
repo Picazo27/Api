@@ -173,8 +173,7 @@ class HomeController
     public function mostrarProteina()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos WHERE categoria = 'Proteina'");
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Proteina'");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
