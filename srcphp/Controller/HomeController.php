@@ -186,8 +186,7 @@ class HomeController
     public function mostrarCreatina()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos WHERE categoria = 'Creatina'");
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Creatina'");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
@@ -200,8 +199,7 @@ class HomeController
     public function mostrarAminoacidos()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos WHERE categoria = 'Aminoacidoa'");
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Aminoacidoa'");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
@@ -214,8 +212,7 @@ class HomeController
     public function mostrarPre()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos WHERE categoria = 'Pre-entreno'");
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Pre-entreno'");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
@@ -228,8 +225,7 @@ class HomeController
     public function mostrarSuplemento()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto,imagen,descripcion,precio,
-            existencia FROM productos WHERE categoria = 'Suplemento'");
+            $productos = Table::query("SELECT * FROM productos WHERE categoria = 'Suplemento'");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
