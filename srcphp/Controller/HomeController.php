@@ -368,7 +368,7 @@ public function Insertarproducto()
         $prod->save();
 
         // Envía una respuesta exitosa
-        $response = new Success(['producto_id' => $prod->id, 'mensaje' => 'Producto guardado exitosamente']);
+        $response = new Success(['producto_id' => $prod->nombre_producto, 'mensaje' => 'Producto guardado exitosamente']);
         return $response->Send();
     } catch (\Exception $e) {
         // Captura cualquier excepción y envía una respuesta de error
