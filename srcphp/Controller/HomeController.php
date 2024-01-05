@@ -85,7 +85,7 @@ class HomeController
     public function mostrarP()
     {
         try {
-            $productos = Table::query("SELECT nombre_producto, categoria, precio, cantidad,
+            $productos = Table::query("SELECT nombre_producto, categoria, precio, existencia,
             precio, nombre_proveedor FROM productos
             inner join proveedores on proveedores.id = productos.proveedor");
             $productos = new Success($productos);
