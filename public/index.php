@@ -41,6 +41,8 @@ Router::get("/categorias",[HomeController::class,"cate"]);
 
 Router::post("/insertarproducto",[HomeController::class,"Insertarproducto"]);
 
+Router::get("/cliente",[HomeController::class,"clientes"]);
+
 
 Router::post('/registro', [UserController::class, 'registro']);
 Router::post('/login', [UserController::class, "login"]);
