@@ -157,7 +157,7 @@ class HomeController
     public function ordenes()
     {
         try {
-            $proveedores = Table::query("SELECT id,users.nombre,estatus FROM orden_venta
+            $proveedores = Table::query("SELECT orden_venta.id,users.nombre,estatus FROM orden_venta
             INNER JOIN users ON orden_venta.cliente = users.id;");
             $proveedores = new Success($proveedores);
             $proveedores->Send();
