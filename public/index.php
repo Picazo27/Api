@@ -20,6 +20,7 @@ Router::get("/", function () {
     echo "Bienvenido";
 });
 
+Router::get("/mostrarp",[HomeController::class,"mostrarP"]);
 
 
 Router::get("/mostrar",[HomeController::class,"mostrarproducto"]);
