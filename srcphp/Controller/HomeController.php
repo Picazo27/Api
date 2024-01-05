@@ -250,6 +250,19 @@ class HomeController
         }
     }
 
+    public function clientes()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM users WHERE roles = 'cliente'");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
     private function validarProveedor($proveedorId, $proveedores)
 {
     foreach ($proveedores as $proveedor) {
