@@ -275,7 +275,7 @@ public function Insertarproducto()
         }
 
         // Verifica campos obligatorios antes de crear la instancia de Producto
-        $requiredFields = ['nombre_producto', 'descripcion', 'precio', 'existencia', 'imagen'];
+        $requiredFields = ['nombre_producto', 'descripcion', 'precio', 'existencia'];
         foreach ($requiredFields as $field) {
             if (empty($dataObject->$field)) {
                 throw new \Exception("El campo $field es obligatorio.");
