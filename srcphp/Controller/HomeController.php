@@ -35,14 +35,21 @@ class HomeController
         echo "Prueba";
     }
 
-    public function verordenes()
+    public function verordenes($clienteId)
     {
         try {
+              // Sanitiza y valida el valor del clienteId
+        $clienteId = filter_var($clienteId, FILTER_VALIDATE_INT);
+
+        if ($clienteId === false || $clienteId <= 0) {
+            throw new \Exception('ID de cliente no válido.');
+        }
             $productos = Table::query("SELECT *
             FROM users
             INNER JOIN orden_venta ON users.id = orden_venta.cliente
             INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
             WHERE users.id = :clienteId");
+
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
