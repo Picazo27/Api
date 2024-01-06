@@ -38,9 +38,11 @@ class HomeController
     public function verordenes()
     {
         try {
-            $productos = Table::query("SELECT * FROM users
-            inner join orden_venta on users.id = orden_venta.cliente
-            inner join detalle_orden_venta on orden_venta.id = detalle_orden_venta.orden ");
+            $productos = Table::query("SELECT *
+            FROM users
+            INNER JOIN orden_venta ON users.id = orden_venta.cliente
+            INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
+            WHERE users.id = :clienteId");
             $productos = new Success($productos);
             $productos->Send();
             return $productos;
