@@ -35,6 +35,21 @@ class HomeController
         echo "Prueba";
     }
 
+    public function verordenes()
+    {
+        try {
+            $productos = Table::query("SELECT * FROM users
+            inner join orden_venta on users.id = orden_venta.cliente
+            inner join detalle_orden_venta on orden_venta.id = detalle_orden_venta.orden ");
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
+    }
+
     public function ordenventa()
     {
         try{
