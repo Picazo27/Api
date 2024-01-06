@@ -253,7 +253,7 @@ class HomeController
     public function clientes()
     {
         try {
-            $productos = Table::query("SELECT nombre, concat(apellido_p, ' ', 
+            $productos = Table::query("SELECT users.id, nombre, concat(apellido_p, ' ', 
             apellido_m) as apellido, concat(calle,' ',numero,' ',colonia,' ',
             codigo_postal) as direccion,user FROM users
             inner join direccion_user on users.id = direccion_user.id_user
