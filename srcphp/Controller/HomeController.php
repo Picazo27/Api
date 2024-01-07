@@ -44,6 +44,8 @@ class HomeController
                 INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
                 WHERE users.id = :clienteId", [':clienteId' => $clienteId]);
     
+    echo "Consulta SQL: $productos\n";
+
             // Verificar si la consulta devolvió resultados
             if (empty($productos)) {
                 throw new \Exception("La consulta no devolvió resultados.");
