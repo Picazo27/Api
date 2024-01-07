@@ -38,6 +38,8 @@ class HomeController
     public function verordenes($clienteId)
     {
         try {
+            echo "Función verordenes ejecutada. Cliente ID: $clienteId";
+
             $query = "SELECT *
                       FROM users
                       INNER JOIN orden_venta ON users.id = orden_venta.cliente
