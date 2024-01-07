@@ -36,33 +36,22 @@ class HomeController
     }
 
     public function verordenes($clienteId)
-{
-    try {
-        // Sanitiza y valida el valor del clienteId
-        $clienteId = filter_var($clienteId, FILTER_VALIDATE_INT);
-
-        if ($clienteId === false || $clienteId <= 0) {
-            throw new \Exception('ID de cliente no válido.');
-        }
-
-        $productos = Table::query("SELECT *
+    {
+        try {
+            $productos = Table::query("SELECT *
             FROM users
             INNER JOIN orden_venta ON users.id = orden_venta.cliente
             INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
-            WHERE users.id = :clienteId");
+            WHERE users.id = $clienteId");
 
-        // Asegúrate de que estás devolviendo un array asociativo con la clave 'ordenes'
-        $response = ['ordenes' => $productos];
-
-        $successResponse = new Success($response);
-        $successResponse->Send();
-        return $successResponse;
-    } catch (\Exception $e) {
-        $failureResponse = new Failure(401, $e->getMessage());
-        return $failureResponse->Send();
+            $productos = new Success($productos);
+            $productos->Send();
+            return $productos;
+        } catch (\Exception $e) {
+            $s = new Failure(401, $e->getMessage());
+            return $s->Send();
+        }
     }
-}
-
 
     public function ordenventa()
     {
@@ -284,7 +273,7 @@ class HomeController
         try {
             $productos = Table::query("SELECT users.id, nombre, concat(apellido_p, ' ', 
             apellido_m) as apellido, concat(calle,' ',numero,' ',colonia,' ',
-            codigo_postal) as direccion,user, telefono, apellido_p, apellido_m FROM users
+            codigo_postal) as direccion,user, telefono, apellido_p, apellido FROM users
             inner join direccion_user on users.id = direccion_user.id_user
             inner join direcciones on direcciones.id = direccion_user.id_direccion 
             WHERE roles = 'cliente'");
