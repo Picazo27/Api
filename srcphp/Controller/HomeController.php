@@ -38,11 +38,12 @@ class HomeController
     public function verordenes($clienteId)
     {
         try {
-            $productos = Table::query("SELECT *
+            
+            $productos = Table::queryParams("SELECT *
             FROM users
             INNER JOIN orden_venta ON users.id = orden_venta.cliente
             INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
-            WHERE users.id = $clienteId");
+            WHERE users.id = :clienteId", [':clienteId' => $clienteId]);
 
             $productos = new Success($productos);
             $productos->Send();
