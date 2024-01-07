@@ -56,7 +56,7 @@ Router::post('/ordenventa',[HomeController::class,"ordenventa"]);
 
 Router::get('/direcciones',[HomeController::class,"direcciones"]);
 
-Router::get('/verordenes/{clienteId}', [HomeController::class,"verordenes"]);
+Router::get('/verordenes', [HomeController::class,"verordenes"]);
 
 
 ?>

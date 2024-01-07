@@ -35,20 +35,16 @@ class HomeController
         echo "Prueba";
     }
 
-    public function verordenes($clienteId)
+    public function verordenes()
     {
         try {
-            echo "Función verordenes ejecutada. Cliente ID: $clienteId";
-
             $query = "SELECT *
                       FROM users
                       INNER JOIN orden_venta ON users.id = orden_venta.cliente
                       INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
-                      WHERE users.id = :clienteId";
-    
-            echo "Consulta SQL: $query\n";
-    
-            $productos = Table::queryParams($query, [':clienteId' => $clienteId]);
+                      ";
+        
+            $productos = Table::query($query);
     
             $productosResponse = new Success($productos);
             $productosResponse->Send();
