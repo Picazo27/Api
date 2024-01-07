@@ -39,7 +39,7 @@ class HomeController
     {
         try {
             $query = " SELECT users.id, nombre,apellido_p,apellido_m,telefono,user,orden_venta.id,
-            fecha,estatus,productos.nombre_producto
+            fecha,estatus,productos.nombre_producto,orden_venta.cliente
             FROM users
             INNER JOIN orden_venta ON users.id = orden_venta.cliente
             INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
