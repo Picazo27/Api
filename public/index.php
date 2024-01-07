@@ -58,7 +58,7 @@ Router::get('/direcciones',[HomeController::class,"direcciones"]);
 
 Router::get('/verordenes', [HomeController::class,"verordenes"]);
 
-Router::post('/actualizarempleado',[HomeController::class,"actualizarempleado"]);
+Router::put('/actualizarempleado',[HomeController::class,"actualizarempleado"]);
 
 
 ?>
