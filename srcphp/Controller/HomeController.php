@@ -35,6 +35,31 @@ class HomeController
         echo "Prueba";
     }
 
+    public function actualizarempleado()
+{
+    try {
+        $JSONData = file_get_contents('php://input');
+        $dataObject = json_decode($JSONData);
+
+        if ($dataObject === null) {
+            throw new \Exception("Error decoding JSON data");
+        }
+
+        $query = "CALL EditarEstatusEmpleado(:empleado_id, :nuevo_estatus)";
+
+        $params = ['empleado_id' => $dataObject->id, 'nuevo_estatus' => $dataObject->estatus];
+
+        $resultado = Table::queryParams($query, $params);
+
+        $r = new Success($resultado);
+        return $r->send();
+    } catch (\Exception $e) {
+        $s = new Failure(401, $e->getMessage());
+        return $s->Send();
+    }
+}
+
+
     public function verordenes()
     {
         try {
