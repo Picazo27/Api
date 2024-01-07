@@ -36,28 +36,33 @@ class HomeController
     }
 
     public function verordenes($clienteId)
-    {
-        try {
-              // Sanitiza y valida el valor del clienteId
+{
+    try {
+        // Sanitiza y valida el valor del clienteId
         $clienteId = filter_var($clienteId, FILTER_VALIDATE_INT);
 
         if ($clienteId === false || $clienteId <= 0) {
             throw new \Exception('ID de cliente no válido.');
         }
-            $productos = Table::query("SELECT *
+
+        $productos = Table::query("SELECT *
             FROM users
             INNER JOIN orden_venta ON users.id = orden_venta.cliente
             INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
             WHERE users.id = :clienteId");
 
-            $productos = new Success($productos);
-            $productos->Send();
-            return $productos;
-        } catch (\Exception $e) {
-            $s = new Failure(401, $e->getMessage());
-            return $s->Send();
-        }
+        // Asegúrate de que estás devolviendo un array asociativo con la clave 'ordenes'
+        $response = ['ordenes' => $productos];
+
+        $successResponse = new Success($response);
+        $successResponse->Send();
+        return $successResponse;
+    } catch (\Exception $e) {
+        $failureResponse = new Failure(401, $e->getMessage());
+        return $failureResponse->Send();
     }
+}
+
 
     public function ordenventa()
     {
