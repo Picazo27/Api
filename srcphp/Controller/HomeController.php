@@ -38,21 +38,26 @@ class HomeController
     public function verordenes($clienteId)
     {
         try {
-            
             $productos = Table::queryParams("SELECT *
-            FROM users
-            INNER JOIN orden_venta ON users.id = orden_venta.cliente
-            INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
-            WHERE users.id = :clienteId", [':clienteId' => $clienteId]);
-
-            $productos = new Success($productos);
-            $productos->Send();
-            return $productos;
+                FROM users
+                INNER JOIN orden_venta ON users.id = orden_venta.cliente
+                INNER JOIN detalle_orden_venta ON orden_venta.id = detalle_orden_venta.orden
+                WHERE users.id = :clienteId", [':clienteId' => $clienteId]);
+    
+            // Verificar si la consulta devolvió resultados
+            if (empty($productos)) {
+                throw new \Exception("La consulta no devolvió resultados.");
+            }
+    
+            $productosResponse = new Success($productos);
+            $productosResponse->Send();
+            return $productosResponse;
         } catch (\Exception $e) {
-            $s = new Failure(401, $e->getMessage());
-            return $s->Send();
+            $errorResponse = new Failure(401, $e->getMessage());
+            return $errorResponse->Send();
         }
     }
+    
 
     public function ordenventa()
     {
